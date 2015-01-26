@@ -161,12 +161,12 @@ void cMainGame::Render()
 
 	
 	
-// 	RECT rc;
-// 	SetRect(&rc, 100, 100, 101, 101);
-// 	char szTemp[1024];
-// 	sprintf(szTemp, "%d / %d", dwGroup , dwMesh);
-// 	m_pFont->DrawTextA(NULL, szTemp, strlen(szTemp),
-// 		&rc, DT_LEFT | DT_TOP | DT_NOCLIP, D3DCOLOR_XRGB(255,0,0));
+ 	/*RECT rc;
+ 	SetRect(&rc, 100, 100, 101, 101);
+ 	char szTemp[1024];
+ 	sprintf(szTemp, "ani no: %d", m_pSkinnedMesh->GetCurrentAni());
+ 	m_pFont->DrawTextA(NULL, szTemp, strlen(szTemp),
+ 		&rc, DT_LEFT | DT_TOP | DT_NOCLIP, D3DCOLOR_XRGB(255,0,0));*/
 
 
 	g_pD3DDevice->EndScene();
