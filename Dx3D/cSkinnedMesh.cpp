@@ -94,6 +94,8 @@ void cSkinnedMesh::Update()
 		SetAnimationIndex(0);
 	}
 	
+	m_pAnimControl->GetTime();
+	
 	m_pAnimControl->AdvanceTime(g_pTimeManager->GetDeltaTime(), NULL);
 
 	UpdateWorldMatrix(m_pRootFrame, NULL);
@@ -165,28 +167,26 @@ void cSkinnedMesh::SetAnimationIndex(DWORD dwIndex)
 	
 	m_pAnimControl->GetAnimationSet(m_eNewAni, &pNewAni);
 	m_pAnimControl->SetTrackAnimationSet(dwNewTrack, pNewAni);
-	
-	m_pAnimControl->KeyTrackEnable(m_dwCurTrack, FALSE, g_pTimeManager->GetDeltaTime() + pNewAni->GetPeriod());
-	m_pAnimControl->KeyTrackSpeed(m_dwCurTrack, 0.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-	m_pAnimControl->KeyTrackWeight(m_dwCurTrack, 0.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-	            
+
+	m_pAnimControl->KeyTrackEnable(m_dwCurTrack, FALSE, m_pAnimControl->GetTime() + MOVE_TRANSITION_TIME);
+	m_pAnimControl->KeyTrackSpeed(m_dwCurTrack, 0.0f, m_pAnimControl->GetTime(), MOVE_TRANSITION_TIME, D3DXTRANSITION_LINEAR);
+	m_pAnimControl->KeyTrackWeight(m_dwCurTrack, 0.0f, m_pAnimControl->GetTime(), MOVE_TRANSITION_TIME, D3DXTRANSITION_LINEAR);
+
 	m_pAnimControl->SetTrackEnable(dwNewTrack, TRUE);
-	m_pAnimControl->KeyTrackSpeed(dwNewTrack, 1.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-	m_pAnimControl->KeyTrackWeight(dwNewTrack, 1.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-	/*m_pAnimControl->SetTrackPosition(0, 0);
-	m_pAnimControl->SetTrackPosition(1, 0);*/
+	m_pAnimControl->KeyTrackSpeed(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), MOVE_TRANSITION_TIME, D3DXTRANSITION_LINEAR);
+	m_pAnimControl->KeyTrackWeight(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), MOVE_TRANSITION_TIME, D3DXTRANSITION_LINEAR);
+	
+	//m_pAnimControl->KeyTrackEnable(m_dwCurTrack, FALSE, m_pAnimControl->GetTime() + pNewAni->GetPeriod());
+	//m_pAnimControl->KeyTrackSpeed(m_dwCurTrack, 0.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
+	//m_pAnimControl->KeyTrackWeight(m_dwCurTrack, 0.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
+	//            
+	//m_pAnimControl->SetTrackEnable(dwNewTrack, TRUE);
+	//m_pAnimControl->KeyTrackSpeed(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
+	//m_pAnimControl->KeyTrackWeight(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
 
-
-	//m_pAnimControl->SetTrackAnimationSet(0, pCurAni);
-	//m_pAnimControl->SetTrackAnimationSet(1, pNewAni);	
-	//m_pAnimControl->SetTrackSpeed(0, 1.0f);
-	//m_pAnimControl->SetTrackSpeed(1, 1.0f);
-	/*m_pAnimControl->SetTrackPriority(0, D3DXPRIORITY_HIGH);
-	m_pAnimControl->SetTrackPriority(1, D3DXPRIORITY_HIGH);*/
-	//m_pAnimControl->ResetTime();
 	m_pAnimControl->SetTrackPosition(dwNewTrack, 0);
 	m_dwCurTrack = dwNewTrack;
-	m_ePervAni = m_eNewAni;
+	m_eCurAni = m_eNewAni;
 //	SAFE_RELEASE(pCurAni);
 	SAFE_RELEASE(pNewAni);
 	/*m_pAnimControl->GetAnimationSet(dwIndex2, &pAnimationSet2);
