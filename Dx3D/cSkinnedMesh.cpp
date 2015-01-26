@@ -9,14 +9,17 @@ cSkinnedMesh::cSkinnedMesh(void)
 	, m_pAniSetNext(NULL)
 	, m_nCurtTrack(0)
 	, m_eCurAni(ANI_SET::IDLE)
+	, m_eNewAni(ANI_SET::IDLE)
+	, m_ePervAni(ANI_SET::IDLE)
 	, m_bState(FALSE)
+	, m_dwCurTrack(0)
 {
 }
 
 
 cSkinnedMesh::~cSkinnedMesh(void)
 {
-	SAFE_RELEASE(m_pAniSet);
+	//SAFE_RELEASE(m_pAniSet);
 
 	if(m_pRootFrame)
 	{
@@ -38,89 +41,59 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 		&m_pRootFrame,
 		&m_pAnimControl);		
 	
-	m_pAnimControl->GetAnimationSet(ANI_SET::IDLE, &m_pAniSet);
-	m_pAnimControl->SetTrackAnimationSet(0, m_pAniSet);
-	m_dLen = m_pAniSet->GetPeriod();
-	
-	m_pAnimControl->GetTrackDesc(0, &m_stTrackDesc);
-	
+	LPD3DXANIMATIONSET pAniSet;
+	m_pAnimControl->GetAnimationSet(ANI_SET::IDLE, &pAniSet);
+	m_pAnimControl->SetTrackAnimationSet(m_dwCurTrack, pAniSet);
+	SAFE_RELEASE(pAniSet);
+
 	SetupBoneMatrixPtrs(m_pRootFrame);
 }
 
+
 void cSkinnedMesh::AniAttack_1()
 {
-	m_pAnimControl->GetAnimationSet(ANI_SET::RUN, &m_pAniSetNext);
-	m_pAnimControl->SetTrackAnimationSet(1, m_pAniSetNext);
-	m_pAnimControl->SetTrackEnable(1, TRUE);
-	m_pAnimControl->SetTrackWeight(1, 0.0f);
-	m_bState = TRUE;
+	
+}
+
+void cSkinnedMesh::AniRun()
+{
+	
+	/*m_pAnimControl->SetTrackPriority(0, D3DXPRIORITY_HIGH);
+	m_pAnimControl->SetTrackPriority(1, D3DXPRIORITY_HIGH);*/
+
 }
 
 void cSkinnedMesh::Update()
 {
+	
 	if (GetKeyState('1') & 0x8000)
 	{
-		//m_pAnimControl->SetTrackPosition(1, 0);		
-		m_pAnimControl->ResetTime();
-		m_pAnimControl->SetTrackPosition(1, 0);
-		AniAttack_1();		
+		m_eNewAni = ANI_SET::ATTECK1;
+		//SetAnimationIndex(0);		
 	}
-		//float x = m_pAnimControl->GetPriorityBlend();
-	
-	if (m_bState)
+	if (GetKeyState('2') & 0x8000)
 	{
-		
-		D3DXTRACK_DESC des;
-		m_pAnimControl->GetTrackDesc(0, &des);
-		D3DXTRACK_DESC des1;
-		m_pAnimControl->GetTrackDesc(1, &des1);
-
-		float tt = des.Position / m_pAniSet->GetPeriod();//0
-		float ttt = des1.Position / m_pAniSetNext->GetPeriod();//1
-		
-		m_pAnimControl->SetTrackWeight(0, 1 - tt);
-		m_pAnimControl->SetTrackWeight(1, ttt);
-
-		m_pAnimControl->SetTrackEnable(0, TRUE);
-		m_pAnimControl->SetTrackEnable(1, TRUE);
-
-		m_pAnimControl->SetTrackSpeed(0, 1.0f);
-		m_pAnimControl->SetTrackSpeed(1, 1.0f);
-
-		m_pAnimControl->SetTrackPriority(0, D3DXPRIORITY_HIGH);
-		m_pAnimControl->SetTrackPriority(1, D3DXPRIORITY_HIGH);
-		//m_pAnimControl->ResetTime();
-
-		char ch[1024];
-		sprintf(ch, "%lf\n", des.Position);
-		OutputDebugString(ch);
-		static bool bTmp = false;
-		if (m_pAniSet->GetPeriod()< des.Position)
-		{	
-			bTmp = TRUE;			
-		}
-		if (bTmp)
-		{	//m_pAnimControl->ResetTime();
-			float tt = des.Position / m_pAniSet->GetPeriod();//0
-			float ttt = des1.Position / m_pAniSetNext->GetPeriod();//1
-			m_pAnimControl->SetTrackWeight(1, 1 - ttt);
-			m_pAnimControl->SetTrackWeight(0, tt);
-
-			if (m_pAniSetNext->GetPeriod()< des1.Position)
-			{
-				m_pAnimControl->SetTrackPosition(0, 0);
-				m_pAnimControl->SetTrackPosition(1, 0);
-
-				m_pAnimControl->SetTrackEnable(1, FALSE);
-				m_pAnimControl->ResetTime();
-				m_bState = FALSE;
-			}
-
-		}
+		m_eNewAni = ANI_SET::ATTECK2;
+		//SetAnimationIndex(0);
+	}
+	if (GetKeyState('3') & 0x8000)
+	{
+		m_eNewAni = ANI_SET::ATTECK3;
+		//SetAnimationIndex(0);
+	}
+	if (GetKeyState('W') & 0x8000)
+	{
+		m_eNewAni = ANI_SET::RUN;
+	}
+	if (GetKeyState('S') & 0x8000)
+	{
+		m_eNewAni = ANI_SET::IDLE;
+	}
+	if (m_eCurAni != m_eNewAni)
+	{
+		SetAnimationIndex(0);
 	}
 	
-	
-
 	m_pAnimControl->AdvanceTime(g_pTimeManager->GetDeltaTime(), NULL);
 
 	UpdateWorldMatrix(m_pRootFrame, NULL);
@@ -181,10 +154,41 @@ void cSkinnedMesh::Render( D3DXFRAME* pFrame )
 	}
 }
 
-void cSkinnedMesh::SetAnimationIndex(DWORD dwIndex, DWORD dwIndex2)
+void cSkinnedMesh::SetAnimationIndex(DWORD dwIndex)
 {
+	DWORD dwNewTrack = (m_dwCurTrack == 0) ? 1 : 0;
 
+	LPD3DXANIMATIONSET pNewAni;
 	
+	m_pAnimControl->UnkeyAllTrackEvents(m_dwCurTrack);
+	m_pAnimControl->UnkeyAllTrackEvents(dwNewTrack);
+	
+	m_pAnimControl->GetAnimationSet(m_eNewAni, &pNewAni);
+	m_pAnimControl->SetTrackAnimationSet(dwNewTrack, pNewAni);
+	
+	m_pAnimControl->KeyTrackEnable(m_dwCurTrack, FALSE, g_pTimeManager->GetDeltaTime() + pNewAni->GetPeriod());
+	m_pAnimControl->KeyTrackSpeed(m_dwCurTrack, 0.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
+	m_pAnimControl->KeyTrackWeight(m_dwCurTrack, 0.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
+	            
+	m_pAnimControl->SetTrackEnable(dwNewTrack, TRUE);
+	m_pAnimControl->KeyTrackSpeed(dwNewTrack, 1.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
+	m_pAnimControl->KeyTrackWeight(dwNewTrack, 1.0f, g_pTimeManager->GetDeltaTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
+	/*m_pAnimControl->SetTrackPosition(0, 0);
+	m_pAnimControl->SetTrackPosition(1, 0);*/
+
+
+	//m_pAnimControl->SetTrackAnimationSet(0, pCurAni);
+	//m_pAnimControl->SetTrackAnimationSet(1, pNewAni);	
+	//m_pAnimControl->SetTrackSpeed(0, 1.0f);
+	//m_pAnimControl->SetTrackSpeed(1, 1.0f);
+	/*m_pAnimControl->SetTrackPriority(0, D3DXPRIORITY_HIGH);
+	m_pAnimControl->SetTrackPriority(1, D3DXPRIORITY_HIGH);*/
+	//m_pAnimControl->ResetTime();
+	m_pAnimControl->SetTrackPosition(dwNewTrack, 0);
+	m_dwCurTrack = dwNewTrack;
+	m_ePervAni = m_eNewAni;
+//	SAFE_RELEASE(pCurAni);
+	SAFE_RELEASE(pNewAni);
 	/*m_pAnimControl->GetAnimationSet(dwIndex2, &pAnimationSet2);
 	
 	
