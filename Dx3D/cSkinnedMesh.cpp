@@ -142,7 +142,7 @@ void cSkinnedMesh::Update()
 		&& m_eCurAni <= ANI_SET::ATTECK3)
 	{
 		atteck = "atteck!";
-		m_pAnimControl->ResetTime();
+		//m_pAnimControl->ResetTime();
 	}
 	else
 	{

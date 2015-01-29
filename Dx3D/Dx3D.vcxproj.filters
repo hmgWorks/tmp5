@@ -132,6 +132,12 @@
     <ClInclude Include="cInputManiger.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="cNode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cNodeMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -231,6 +237,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="cInputManiger.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cNodeMap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

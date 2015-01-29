@@ -101,6 +101,8 @@
     <ClInclude Include="cInputManiger.h" />
     <ClInclude Include="cMainGame.h" />
     <ClInclude Include="cMtlTex.h" />
+    <ClInclude Include="cNode.h" />
+    <ClInclude Include="cNodeMap.h" />
     <ClInclude Include="cObject.h" />
     <ClInclude Include="cObjectManager.h" />
     <ClInclude Include="cObjLoader.h" />
@@ -138,6 +140,8 @@
     <ClCompile Include="cInputManiger.cpp" />
     <ClCompile Include="cMainGame.cpp" />
     <ClCompile Include="cMtlTex.cpp" />
+    <ClCompile Include="cNode.cpp" />
+    <ClCompile Include="cNodeMap.cpp" />
     <ClCompile Include="cObject.cpp" />
     <ClCompile Include="cObjectManager.cpp" />
     <ClCompile Include="cObjLoader.cpp" />
