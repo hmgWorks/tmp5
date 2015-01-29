@@ -9,10 +9,12 @@ class cMtlTex;
 class cFrame;
 class cCubeMan;
 class cSkinnedMesh;
+class cNodeMap;
 
 class cMainGame : public cObject
 {
 private:
+	cNodeMap*				m_pNodeMap;
 	cGrid*					m_pGrid;
 	cCamera*				m_pCamera;
 	iMap*					m_pMap;

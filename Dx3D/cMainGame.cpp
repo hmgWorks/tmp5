@@ -12,6 +12,7 @@
 #include "cCubeMan.h"
 #include "cAllocateHierarchy.h"
 #include "cSkinnedMesh.h"
+#include "cNodeMap.h"
 
 cMainGame::cMainGame(void)
 	: m_pGrid(NULL)
@@ -21,12 +22,14 @@ cMainGame::cMainGame(void)
 	, m_pAseRoot(NULL)
 	, m_pCubeMan(NULL)
 	, m_pSkinnedMesh(NULL)
+	, m_pNodeMap(NULL)
 {
 }
 
 
 cMainGame::~cMainGame(void)
 {
+	SAFE_DELETE(m_pNodeMap);
 	SAFE_DELETE(m_pGrid);
 	SAFE_DELETE(m_pCamera);
 	SAFE_RELEASE(m_pFont);
@@ -45,18 +48,21 @@ cMainGame::~cMainGame(void)
 
 void cMainGame::Setup()
 {
+	m_pNodeMap = new cNodeMap;
+	m_pNodeMap->Setup();
+	
 	m_pSkinnedMesh = new cSkinnedMesh;
 	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
 
-	m_pCubeMan = new cCubeMan;
-	m_pCubeMan->Setup();
+	//m_pCubeMan = new cCubeMan;
+	//m_pCubeMan->Setup();
 
 	m_pGrid = new cGrid;
 	m_pGrid->Setup(30, 1);
 
-	cHeightMap* pMap =new cHeightMap;
-	pMap->Load("HeightMapData/HeightMap.raw", "HeightMapData/terrain.jpg");
-	m_pMap = pMap;
+	//cHeightMap* pMap =new cHeightMap;
+	//pMap->Load("HeightMapData/HeightMap.raw", "HeightMapData/terrain.jpg");
+	//m_pMap = pMap;
 
 	//std::string sFolder(RESOURCE_FOLDER);
 	//sFolder += std::string("ase/woman/");
@@ -115,11 +121,20 @@ void cMainGame::Update()
 {
 	g_pTimeManager->Update();
 
-	m_pCubeMan->Update(m_pMap);		
+	if(m_pCubeMan)
+		m_pCubeMan->Update(m_pMap);
 	
-	m_pSkinnedMesh->Update();
+	if (m_pSkinnedMesh)
+	{
+		//static float n = 0;
+		//n+=0.01f;
+		//D3DXVECTOR3 v = D3DXVECTOR3(n, 0, 0);
+		//m_pSkinnedMesh->SetPosition(v);
+		m_pSkinnedMesh->Update();
+	}
 
-	m_pCamera->Update();
+	if(m_pCamera)
+		m_pCamera->Update();
 
 	int nKey = (int)(GetTickCount() * 4.8f) % (3200 - 640) + 640;
 	//int nKey = (GetTickCount() % 3200)* 4.8f;
@@ -145,7 +160,11 @@ void cMainGame::Render()
 	
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
 
-	m_pSkinnedMesh->Render();
+	if (m_pNodeMap)
+		m_pNodeMap->Render();	
+
+	if(m_pSkinnedMesh)
+		m_pSkinnedMesh->Render();
 	//m_pCubeMan->Render();
 
 	D3DXMATRIXA16 matWorld;

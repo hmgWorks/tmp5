@@ -1,31 +1,42 @@
 #pragma once
-#define MOVE_TRANSITION_TIME 0.5f
+#define MOVE_TRANSITION_TIME 0.25f
 
 class cSkinnedMesh
 {
-private:
+private:	
+	enum ANI_SET { ATTECK1 = 0, ATTECK2, ATTECK3, RUN, IDLE, MAX};
+	
 	D3DXFRAME*					m_pRootFrame;
 	LPD3DXANIMATIONCONTROLLER	m_pAnimControl;
 
 	LPD3DXANIMATIONSET	m_pAniSet;
 	LPD3DXANIMATIONSET	m_pAniSetNext;
 	UINT				m_nCurtTrack;
-	DOUBLE m_dLen;
-	D3DXTRACK_DESC	m_stTrackDesc;
-	DWORD	m_dwCurTrack;
+	DOUBLE				m_dLen;
+	D3DXTRACK_DESC		m_stTrackDesc;
+	DWORD				m_dwCurTrack;
 
-	enum ANI_SET{ ATTECK1 = 0, ATTECK2, ATTECK3, RUN, IDLE, MAX };
-	ANI_SET m_eCurAni;
-	ANI_SET m_eNewAni;
-	ANI_SET m_ePervAni;
+	ANI_SET			m_eCurAni;
+	ANI_SET			m_eNewAni;
+	ANI_SET			m_ePervAni;
 
-	float m_Perv;
-	BOOL m_bState;
+	float			m_Perv;
+	BOOL			m_bState;
 
-	char m_chDesc[1024];
-	char m_chAtteck[1024];
-	DOUBLE m_bTrackPos;
-	LPD3DXFONT				m_pFont;
+	char			m_chDesc[1024];
+	char			m_chAtteck[1024];
+	DOUBLE			m_bTrackPos;
+	LPD3DXFONT		m_pFont;
+
+	//dijkstra 
+	D3DXVECTOR3		m_vForward;
+	float			m_fAngle;
+	float			m_fSpeed;
+	D3DXMATRIXA16	m_matWorld;
+	SYNTHESIZE_PASS_BY_REF(D3DXVECTOR3, m_vPosition, Position);
+	SYNTHESIZE_PASS_BY_REF(D3DXVECTOR3, m_vDestinationPos, DestinationPos);
+	
+
 public:
 	cSkinnedMesh(void);
 	~cSkinnedMesh(void);
@@ -48,6 +59,7 @@ private:
 	void Render(D3DXFRAME* pFrame);
 	void SetupBoneMatrixPtrs(D3DXFRAME* pFrame);
 	void UpdateSkinnedMesh( D3DXFRAME* pFrame );
+
 
 };
 

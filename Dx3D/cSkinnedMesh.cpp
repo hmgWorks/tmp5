@@ -16,7 +16,13 @@ cSkinnedMesh::cSkinnedMesh(void)
 	, m_Perv(0.0f)
 	, m_pFont(NULL)
 	, m_bTrackPos(0)
+	, m_vPosition(0.0f, 0.0f, 0.0f)
+	, m_vDestinationPos(1.0f, 0.0f, 1.0f)
+	, m_vForward(0, 0, -1)
+	, m_fAngle(0.0f)
+	, m_fSpeed(0.05f)
 {
+	D3DXMatrixIdentity(&m_matWorld);
 }
 
 
@@ -33,7 +39,6 @@ cSkinnedMesh::~cSkinnedMesh(void)
 
 void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 {
-
 	D3DXFONT_DESC fd;
 	ZeroMemory(&fd, sizeof(D3DXFONT_DESC));
 	fd.Height = 20;
@@ -108,16 +113,47 @@ void cSkinnedMesh::Update()
 	if (GetKeyState('W') & 0x8000)
 	{
 		m_eNewAni = ANI_SET::RUN;
+		m_vPosition += (m_vForward * m_fSpeed);
 	}
 	if (GetKeyState('S') & 0x8000)
 	{
+		m_eNewAni = ANI_SET::IDLE;		
+	}
+
+	if (GetKeyState('A') & 0x8000)
+	{
+		m_fAngle -= 0.01f;
+		D3DXMATRIXA16 matR;
+		D3DXMatrixRotationY(&matR, m_fAngle);
+		m_vForward = D3DXVECTOR3(0, 0, -1);
+		D3DXVec3TransformNormal(&m_vForward, &m_vForward, &matR);
+	}
+
+	if (GetKeyState('D') & 0x8000)
+	{
+		m_fAngle += 0.01f;
+		D3DXMATRIXA16 matR;
+		D3DXMatrixRotationY(&matR, m_fAngle);
+		m_vForward = D3DXVECTOR3(0, 0, -1);
+		D3DXVec3TransformNormal(&m_vForward, &m_vForward, &matR);
+	}
+	if (!(GetKeyState('W') & 0x8000)
+		&& !(GetKeyState('A') & 0x8000)
+		&& !(GetKeyState('S') & 0x8000)
+		&& !(GetKeyState('D') & 0x8000))
+	{
 		m_eNewAni = ANI_SET::IDLE;
 	}
+
 	if (m_eCurAni != m_eNewAni)
 	{
+		//animation change
 		SetAnimationIndex(0);
 	}
-	
+
+
+
+
 	LPD3DXANIMATIONSET pAs;
 	m_pAnimControl->GetAnimationSet(m_dwCurTrack, &pAs);
 	D3DXTRACK_DESC de;
@@ -127,11 +163,11 @@ void cSkinnedMesh::Update()
 	memset(m_chDesc, 0, 1024);
 	sprintf(m_chDesc, "%d, %.2f, %.2f, %.2f", de.Enable, de.Speed,de.Weight, de.Position);
 
-	if (de.Position > pAs->GetPeriod()+MOVE_TRANSITION_TIME)
+	/*if (de.Position > pAs->GetPeriod()+MOVE_TRANSITION_TIME)
 	{
 		m_eNewAni = ANI_SET::IDLE;
 		SetAnimationIndex(0);
-	}
+	}*/
 	char* atteck;
 	double aa = pAs->GetPeriodicPosition(m_pAnimControl->GetTime());/*
 	if (((pAs->GetPeriod() + MOVE_TRANSITION_TIME) /2 <=de.Position
@@ -153,8 +189,13 @@ void cSkinnedMesh::Update()
 
 	m_pAnimControl->AdvanceTime(g_pTimeManager->GetDeltaTime(), NULL);
 
-	UpdateWorldMatrix(m_pRootFrame, NULL);
 
+	D3DXMATRIXA16 matT, matR;
+	D3DXMatrixRotationY(&matR, m_fAngle);
+	D3DXMatrixTranslation(&matT, m_vPosition.x, m_vPosition.y, m_vPosition.z);
+
+	m_matWorld = matR * matT;
+	UpdateWorldMatrix(m_pRootFrame, &m_matWorld);
 	UpdateSkinnedMesh(m_pRootFrame);
 }
 
@@ -166,12 +207,15 @@ void cSkinnedMesh::Render()
 
 void cSkinnedMesh::UpdateWorldMatrix( D3DXFRAME* pFrame, D3DXMATRIXA16* pmatParent )
 {
-	ST_BONE* pBone = (ST_BONE*)pFrame;
-	pBone->matWorldTM = pBone->TransformationMatrix;
+	ST_BONE* pBone = (ST_BONE*)pFrame;	
 	
 	if(pmatParent)
 	{
-		pBone->matWorldTM = pBone->matWorldTM * (*pmatParent);
+		pBone->matWorldTM = pBone->TransformationMatrix * (*pmatParent);
+	}
+	else
+	{
+		pBone->matWorldTM = pBone->TransformationMatrix;
 	}
 
 	if(pBone->pFrameSibling)
