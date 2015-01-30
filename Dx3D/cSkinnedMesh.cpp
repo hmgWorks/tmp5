@@ -2,6 +2,7 @@
 #include "cSkinnedMesh.h"
 #include "cAllocateHierarchy.h"
 #include "cMtlTex.h"
+#include "cNodeMap.h"
 
 cSkinnedMesh::cSkinnedMesh(void)
 	: m_pRootFrame(NULL)
@@ -17,10 +18,17 @@ cSkinnedMesh::cSkinnedMesh(void)
 	, m_pFont(NULL)
 	, m_bTrackPos(0)
 	, m_vPosition(0.0f, 0.0f, 0.0f)
+	, m_vPervPos(0.0f, 0.0f, 0.0f)
 	, m_vDestinationPos(1.0f, 0.0f, 1.0f)
 	, m_vForward(0, 0, -1)
 	, m_fAngle(0.0f)
 	, m_fSpeed(0.05f)
+	, m_nStNode(-1)
+	, m_nDestNode(1)
+	, m_fActionTime(0.0f)
+	, m_fPassedTime(0.0f)
+	, m_pDelegate(NULL)
+	, m_nCurrNode(0)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 }
@@ -39,6 +47,8 @@ cSkinnedMesh::~cSkinnedMesh(void)
 
 void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 {
+	SetActionTime(2.0f);
+	SetCurAni(ANI_SET::IDLE);
 	D3DXFONT_DESC fd;
 	ZeroMemory(&fd, sizeof(D3DXFONT_DESC));
 	fd.Height = 20;
@@ -87,14 +97,32 @@ void cSkinnedMesh::AniAttack_1()
 void cSkinnedMesh::AniRun()
 {
 	
-	/*m_pAnimControl->SetTrackPriority(0, D3DXPRIORITY_HIGH);
-	m_pAnimControl->SetTrackPriority(1, D3DXPRIORITY_HIGH);*/
-
 }
 
 void cSkinnedMesh::Update()
 {
-	
+	//
+	if (m_eCurAni == ANI_SET::RUN)
+	{
+		m_fPassedTime += g_pTimeManager->GetDeltaTime();
+
+		float t = m_fPassedTime / m_fActionTime;
+		if (t < 1.0f)
+		{
+			D3DXVec3Lerp(&m_vPosition, &m_vPervPos, &m_vDestinationPos, t);
+			D3DXVECTOR3 v = m_vPervPos - m_vDestinationPos;
+			m_fAngle = atan2(v.x, v.z);
+		}
+		else
+		{
+			if (m_pDelegate)
+				m_pDelegate->OnActionFinish(this);
+			m_fPassedTime = 0.0f;
+
+		}
+	}
+		
+
 	if (GetKeyState('1') & 0x8000)
 	{
 		m_eNewAni = ANI_SET::ATTECK1;
@@ -122,7 +150,7 @@ void cSkinnedMesh::Update()
 
 	if (GetKeyState('A') & 0x8000)
 	{
-		m_fAngle -= 0.01f;
+		m_fAngle -= 0.05f;
 		D3DXMATRIXA16 matR;
 		D3DXMatrixRotationY(&matR, m_fAngle);
 		m_vForward = D3DXVECTOR3(0, 0, -1);
@@ -131,19 +159,19 @@ void cSkinnedMesh::Update()
 
 	if (GetKeyState('D') & 0x8000)
 	{
-		m_fAngle += 0.01f;
+		m_fAngle += 0.05f;
 		D3DXMATRIXA16 matR;
 		D3DXMatrixRotationY(&matR, m_fAngle);
 		m_vForward = D3DXVECTOR3(0, 0, -1);
 		D3DXVec3TransformNormal(&m_vForward, &m_vForward, &matR);
 	}
-	if (!(GetKeyState('W') & 0x8000)
-		&& !(GetKeyState('A') & 0x8000)
-		&& !(GetKeyState('S') & 0x8000)
-		&& !(GetKeyState('D') & 0x8000))
-	{
-		m_eNewAni = ANI_SET::IDLE;
-	}
+	//if (!(GetKeyState('W') & 0x8000)
+	//	&& !(GetKeyState('A') & 0x8000)
+	//	&& !(GetKeyState('S') & 0x8000)
+	//	&& !(GetKeyState('D') & 0x8000))
+	//{
+	//	m_eNewAni = ANI_SET::IDLE;
+	//}
 
 	if (m_eCurAni != m_eNewAni)
 	{
@@ -195,8 +223,10 @@ void cSkinnedMesh::Update()
 	D3DXMatrixTranslation(&matT, m_vPosition.x, m_vPosition.y, m_vPosition.z);
 
 	m_matWorld = matR * matT;
-	UpdateWorldMatrix(m_pRootFrame, &m_matWorld);
+	UpdateWorldMatrix(m_pRootFrame, NULL);
 	UpdateSkinnedMesh(m_pRootFrame);
+
+	//m_vPervPos = m_vPosition;
 }
 
 void cSkinnedMesh::Render()
@@ -241,8 +271,13 @@ void cSkinnedMesh::Render( D3DXFRAME* pFrame )
 	
 
 	ST_BONE* pBone = (ST_BONE*)pFrame;
-
-	g_pD3DDevice->SetTransform(D3DTS_WORLD, &pBone->matWorldTM);
+	D3DXMATRIXA16 matW;
+	matW = pBone->matWorldTM * m_matWorld;
+	 //m_matWorld
+	//D3DXMatrixTranslation(&matT, m_vPosition.x, m_vPosition.y, m_vPosition.z);
+	//matWorld = pBone->matWorldTM * matT;
+	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matW);
+	//g_pD3DDevice->SetTransform(D3DTS_WORLD, &pBone->matWorldTM);
 
 	if(pBone->pMeshContainer)
 	{
@@ -414,4 +449,40 @@ void cSkinnedMesh::UpdateSkinnedMesh( D3DXFRAME* pFrame )
 	{
 		UpdateSkinnedMesh(pBone->pFrameFirstChild);
 	}
+}
+
+//void cSkinnedMesh::SetMoveNext(const D3DXVECTOR3& nextNode)
+//{
+//	m_vDestinationPos = nextNode;
+//}
+
+//void cSkinnedMesh::SetObserver(iObserver* observer)
+//{
+//	if (m_nStNode != -1)
+//		observer->SetDijkstra(m_nStNode, m_nDestNode);
+//	m_iObser = observer;
+//}
+//
+//void cSkinnedMesh::Notify()
+//{
+//	m_iObser->UpdateSubject((*this));
+//}
+
+void cSkinnedMesh::SetDelegate(iNodeMapDelegate* dele)
+{
+	m_pDelegate = dele;
+	//dynamic_cast<cNodeMap*>(m_pDelegate)->CalcDijkstra(m_nStNode, m_nDestNode);
+}
+
+void cSkinnedMesh::SetDestNode(int n)
+{
+	if (m_pDelegate)
+	{
+		m_pDelegate->OnActionStart(this);
+	}
+}
+
+int cSkinnedMesh::GetDestNode()
+{
+	return m_nDestNode;
 }

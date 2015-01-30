@@ -22,7 +22,7 @@ private:
 	LPD3DXFONT				m_pFont;
 	cCubeMan*				m_pCubeMan;
 	cSkinnedMesh*			m_pSkinnedMesh;
-
+	int m_index;
 public:
 	cMainGame(void);
 	~cMainGame(void);

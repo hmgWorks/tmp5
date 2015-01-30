@@ -23,9 +23,11 @@
 #include <list>
 #include <map>
 #include <set>
+#include <stack>
 #include <string>
 #include <assert.h>
 #include <d3dx9.h>
+	
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
@@ -63,6 +65,11 @@ public: virtual void Set##funName(varType var){\
 
 // 인터페이스들
 #include "iActionDelegate.h"
+#include "iObserver.h"
+#include "iSubject.h"
+#include "iMove.h"
+#include "iNodeMapDelegate.h"
+
 
 #include "cObject.h"
 #include "cGameObject.h"
@@ -71,8 +78,9 @@ public: virtual void Set##funName(varType var){\
 #include "cDeviceManager.h"
 #include "cTextureManager.h"
 #include "cInputManiger.h"
+#include "cDijkstra.h"
 
-
+#define INFINITYNUM 9000
 #define RESOURCE_FOLDER "../../Resources/"
 
 struct ST_RHWC_VERTEX

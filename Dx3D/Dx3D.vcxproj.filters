@@ -138,6 +138,21 @@
     <ClInclude Include="cNodeMap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="cDijkstra.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="iSubject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="iObserver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="iMove.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="iNodeMapDelegate.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -243,6 +258,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="cNodeMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cDijkstra.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

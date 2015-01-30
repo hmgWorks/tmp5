@@ -23,6 +23,7 @@ cMainGame::cMainGame(void)
 	, m_pCubeMan(NULL)
 	, m_pSkinnedMesh(NULL)
 	, m_pNodeMap(NULL)
+	, m_index(0)
 {
 }
 
@@ -53,7 +54,11 @@ void cMainGame::Setup()
 	
 	m_pSkinnedMesh = new cSkinnedMesh;
 	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
-
+	//m_pSkinnedMesh->SetStNode(1);
+	//m_pSkinnedMesh->SetDestNode(8);	
+	m_pSkinnedMesh->SetDelegate(m_pNodeMap);	
+	
+	m_pSkinnedMesh->SetDestinationPos(m_pNodeMap->GetNextNode(1));
 	//m_pCubeMan = new cCubeMan;
 	//m_pCubeMan->Setup();
 
@@ -124,12 +129,15 @@ void cMainGame::Update()
 	if(m_pCubeMan)
 		m_pCubeMan->Update(m_pMap);
 	
+
+
 	if (m_pSkinnedMesh)
 	{
-		//static float n = 0;
-		//n+=0.01f;
-		//D3DXVECTOR3 v = D3DXVECTOR3(n, 0, 0);
-		//m_pSkinnedMesh->SetPosition(v);
+		if (g_pInputManager->GetKeyDownOnce(VK_RETURN))
+		{			
+			m_pSkinnedMesh->SetDestNode(m_index);
+			m_pSkinnedMesh->SetCurAni(cSkinnedMesh::ANI_SET::RUN);
+		}
 		m_pSkinnedMesh->Update();
 	}
 
@@ -196,9 +204,13 @@ void cMainGame::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
 	if(m_pCamera)
 		m_pCamera->WndProc(hWnd, message, wParam, lParam);
-
+	char ch;
 	switch (message)
 	{
+	case WM_CHAR:
+		ch = wParam;		
+		m_index = (int)ch - 48;
+		break;
 	case WM_RBUTTONDOWN:
 		{
 			int nX = LOWORD(lParam);
