@@ -10,10 +10,13 @@ protected:
 	SYNTHESIZE(cGameObject*, m_pOwner, Owner);
 	SYNTHESIZE(iActionDelegate*, m_pDelegate, Delegate);
 
+
 public:
 	cAction();
 	virtual ~cAction();
 	virtual void Start() {}
 	virtual void Update() = 0;
+
+	
 };
 
