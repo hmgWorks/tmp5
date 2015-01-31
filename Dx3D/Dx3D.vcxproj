@@ -103,6 +103,7 @@
     <ClInclude Include="cMainGame.h" />
     <ClInclude Include="cMtlTex.h" />
     <ClInclude Include="cNode.h" />
+    <ClInclude Include="cNodeGroup.h" />
     <ClInclude Include="cNodeMap.h" />
     <ClInclude Include="cObject.h" />
     <ClInclude Include="cObjectManager.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="iMove.h" />
     <ClInclude Include="iNodeMapDelegate.h" />
     <ClInclude Include="iObserver.h" />
+    <ClInclude Include="iPathNavigation.h" />
     <ClInclude Include="iSubject.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -147,6 +149,7 @@
     <ClCompile Include="cMainGame.cpp" />
     <ClCompile Include="cMtlTex.cpp" />
     <ClCompile Include="cNode.cpp" />
+    <ClCompile Include="cNodeGroup.cpp" />
     <ClCompile Include="cNodeMap.cpp" />
     <ClCompile Include="cObject.cpp" />
     <ClCompile Include="cObjectManager.cpp" />

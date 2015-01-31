@@ -10,6 +10,7 @@ class cFrame;
 class cCubeMan;
 class cSkinnedMesh;
 class cNodeMap;
+class cNodeGroup;
 
 class cMainGame : public cObject
 {
@@ -23,6 +24,8 @@ private:
 	cCubeMan*				m_pCubeMan;
 	cSkinnedMesh*			m_pSkinnedMesh;
 	int m_index;
+	cNodeGroup*				m_pNodeGroup;
+
 public:
 	cMainGame(void);
 	~cMainGame(void);

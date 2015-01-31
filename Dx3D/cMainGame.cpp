@@ -13,6 +13,7 @@
 #include "cAllocateHierarchy.h"
 #include "cSkinnedMesh.h"
 #include "cNodeMap.h"
+#include "cNodeGroup.h"
 
 cMainGame::cMainGame(void)
 	: m_pGrid(NULL)
@@ -24,12 +25,14 @@ cMainGame::cMainGame(void)
 	, m_pSkinnedMesh(NULL)
 	, m_pNodeMap(NULL)
 	, m_index(0)
+	, m_pNodeGroup(NULL)
 {
 }
 
 
 cMainGame::~cMainGame(void)
 {
+	SAFE_DELETE(m_pNodeGroup);
 	SAFE_DELETE(m_pNodeMap);
 	SAFE_DELETE(m_pGrid);
 	SAFE_DELETE(m_pCamera);
@@ -49,17 +52,19 @@ cMainGame::~cMainGame(void)
 
 void cMainGame::Setup()
 {
-	m_pNodeMap = new cNodeMap;
-	m_pNodeMap->Setup();
+	m_pNodeGroup = new cNodeGroup;
+	m_pNodeGroup->Setup(D3DXVECTOR3(5, 0, 5));
+	//m_pNodeMap = new cNodeMap;
+	//m_pNodeMap->Setup();
 	
 	m_pSkinnedMesh = new cSkinnedMesh;
 	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
 	//m_pSkinnedMesh->SetStNode(1);
 	//m_pSkinnedMesh->SetDestNode(8);	
-	m_pSkinnedMesh->SetPosition(m_pNodeMap->GetNode(0));
-	m_pSkinnedMesh->SetDelegate(m_pNodeMap);	
+	//m_pSkinnedMesh->SetPosition(m_pNodeMap->GetNode(0));
+	//m_pSkinnedMesh->SetDelegate(m_pNodeMap);	
 	
-	m_pSkinnedMesh->SetDestinationPos(m_pNodeMap->GetNextNode(1));
+	//m_pSkinnedMesh->SetDestinationPos(m_pNodeMap->GetNextNode(1));
 	//m_pCubeMan = new cCubeMan;
 	//m_pCubeMan->Setup();
 
@@ -158,7 +163,7 @@ void cMainGame::Render()
 	g_pD3DDevice->Clear(NULL,
 		NULL,
 		D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-		D3DCOLOR_XRGB(47, 121, 112),
+		D3DCOLOR_XRGB(33, 40, 48),
 		//D3DCOLOR_XRGB(0, 0, 255),
 		1.0f, 0);
 	g_pD3DDevice->BeginScene();
@@ -168,6 +173,9 @@ void cMainGame::Render()
 	m_pGrid->Render();
 	
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
+
+	if (m_pNodeGroup)
+		m_pNodeGroup->Render();
 
 	if (m_pNodeMap)
 		m_pNodeMap->Render();	

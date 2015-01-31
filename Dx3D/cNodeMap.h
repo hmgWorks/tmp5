@@ -1,6 +1,7 @@
 #pragma once
 
 class cDijkstra;
+__interface iPathNavigation;
 
 class cNodeMap
 	:public iNodeMapDelegate
@@ -20,6 +21,8 @@ private:
 	std::vector<ST_PC_VERTEX> vecLineVertex;
 	SYNTHESIZE(int, m_fStNode, StNode);
 	SYNTHESIZE(int, m_fDestNode, DestNode);
+	
+	iPathNavigation* m_pNavigation;
 
 public:
 	cNodeMap();

@@ -10,6 +10,7 @@ cNodeMap::cNodeMap()
 	, m_nCurrindex(0)
 	, m_fStNode(-1)
 	, m_fDestNode(-1)
+	, m_pNavigation(NULL)
 {
 }
 
@@ -28,11 +29,11 @@ void cNodeMap::Setup()
 	m_stMtl.Specular = D3DXCOLOR(1, 0, 0, 1);
 
 
-	m_vecNode.push_back(D3DXVECTOR3(0, 0, 0));
-	m_vecNode.push_back(D3DXVECTOR3(2, 0, 2));
-	m_vecNode.push_back(D3DXVECTOR3(6, 0, 4));
-	m_vecNode.push_back(D3DXVECTOR3(3, 0, 1));
-	m_vecNode.push_back(D3DXVECTOR3(9, 0, 3));
+	m_vecNode.push_back(D3DXVECTOR3(0, 0, 0	));
+	m_vecNode.push_back(D3DXVECTOR3(2, 0, 2	));
+	m_vecNode.push_back(D3DXVECTOR3(6, 0, 4	));
+	m_vecNode.push_back(D3DXVECTOR3(3, 0, 1	));
+	m_vecNode.push_back(D3DXVECTOR3(9, 0, 3	));
 	m_vecNode.push_back(D3DXVECTOR3(3, 0, -4));	
 	m_vecNode.push_back(D3DXVECTOR3(9, 0, -3));
 	m_vecNode.push_back(D3DXVECTOR3(13, 0, 0));
