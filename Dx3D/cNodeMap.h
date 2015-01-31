@@ -28,6 +28,8 @@ public:
 	void Setup();
 	void Update();
 	void Render();
+	
+	D3DXVECTOR3& const GetNode(int n);
 	D3DXVECTOR3 GetNextNode(int index)
 	{
 		return m_vecNode[index];

@@ -11,14 +11,14 @@ cDijkstra::~cDijkstra()
 }
 
 void cDijkstra::CalcDijkstra(int NodeCount, const std::vector<std::vector<int>> EdgeCost, int StartNode, int DestNode, OUT std::stack<int>& DijkstraValue)
-{	
+{
 	//isVisited
 	std::vector<bool>	isVisted(NodeCount, false);
 	std::vector<int>	Via(NodeCount, -1);
 	std::vector<int>	Cost(NodeCount, INT_MAX);
 
-	Cost[StartNode -1] = 0;
-	
+	Cost[StartNode - 1] = 0;
+
 	while (true)
 	{
 		int ViaNode = -1;
@@ -50,7 +50,7 @@ void cDijkstra::CalcDijkstra(int NodeCount, const std::vector<std::vector<int>> 
 			{
 				continue;
 			}
-			if (Cost[ViaNode]+ EdgeCost[ViaNode][i] < Cost[i])
+			if (Cost[ViaNode] + EdgeCost[ViaNode][i] < Cost[i])
 			{
 				Cost[i] = Cost[ViaNode] + EdgeCost[ViaNode][i];
 				Via[i] = ViaNode;
@@ -70,6 +70,6 @@ void cDijkstra::CalcDijkstra(int NodeCount, const std::vector<std::vector<int>> 
 		{
 			break;
 		}
-		DijkstraValue.push(destVia);		
+		DijkstraValue.push(destVia);
 	}
 }

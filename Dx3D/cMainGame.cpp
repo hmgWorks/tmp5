@@ -56,6 +56,7 @@ void cMainGame::Setup()
 	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
 	//m_pSkinnedMesh->SetStNode(1);
 	//m_pSkinnedMesh->SetDestNode(8);	
+	m_pSkinnedMesh->SetPosition(m_pNodeMap->GetNode(0));
 	m_pSkinnedMesh->SetDelegate(m_pNodeMap);	
 	
 	m_pSkinnedMesh->SetDestinationPos(m_pNodeMap->GetNextNode(1));

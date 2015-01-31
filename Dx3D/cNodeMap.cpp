@@ -279,3 +279,8 @@ void cNodeMap::OnNewWay(int st, int dest)
 {
 	CalcDijkstra(st, dest);
 }
+
+D3DXVECTOR3& const cNodeMap::GetNode(int n)
+{
+	return m_vecNode[n];
+}
