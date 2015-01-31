@@ -69,7 +69,7 @@ public: virtual void Set##funName(varType var){\
 #include "iSubject.h"
 #include "iMove.h"
 #include "iNodeMapDelegate.h"
-
+#include "iPathNavigation.h"
 
 #include "cObject.h"
 #include "cGameObject.h"

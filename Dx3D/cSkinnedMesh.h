@@ -2,7 +2,7 @@
 #define MOVE_TRANSITION_TIME 0.25f
 __interface iNodeMapDelegate;
 class cSkinnedMesh
-	//:public iMove, public iSubject
+	:/*public iMove, */public iSubject
 {
 public:
 	enum ANI_SET { ATTECK1 = 0, ATTECK2, ATTECK3, RUN, IDLE, MAX};

@@ -1,21 +1,21 @@
 #pragma once
 
 /*
-	경로의 노드 position, id를 가진다.
+	경로의 노드,
+	position, id
 */
 
 class cNode
 {
-private:	
-	int m_nId;
-	D3DXVECTOR3 m_vPosition;
-
-
 public:
 	cNode();
 	cNode(int id, D3DXVECTOR3& const pos);
 	~cNode();	
 
+
+private:	
+	int m_nId;
+	D3DXVECTOR3 m_vPosition;
 
 public:
 	inline int GetId() { return m_nId; }
