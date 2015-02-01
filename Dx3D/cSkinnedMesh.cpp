@@ -3,6 +3,7 @@
 #include "cAllocateHierarchy.h"
 #include "cMtlTex.h"
 #include "cNodeMap.h"
+#include "cHUD.h"
 
 cSkinnedMesh::cSkinnedMesh(void)
 	: m_pRootFrame(NULL)
@@ -12,10 +13,9 @@ cSkinnedMesh::cSkinnedMesh(void)
 	, m_eCurAni(ANI_SET::IDLE)
 	, m_eNewAni(ANI_SET::IDLE)
 	, m_ePervAni(ANI_SET::IDLE)
-	, m_bState(FALSE)
 	, m_dwCurTrack(0)
 	, m_Perv(0.0f)
-	, m_pFont(NULL)
+	//, m_pFont(NULL)
 	, m_bTrackPos(0)
 	, m_vPosition(0.0f, 0.0f, 0.0f)
 	, m_vPervPos(0.0f, 0.0f, 0.0f)
@@ -29,6 +29,7 @@ cSkinnedMesh::cSkinnedMesh(void)
 	, m_fPassedTime(0.0f)
 	, m_pDelegate(NULL)
 	, m_nCurrNode(0)
+	, m_pHUD(NULL)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 }
@@ -37,7 +38,8 @@ cSkinnedMesh::cSkinnedMesh(void)
 cSkinnedMesh::~cSkinnedMesh(void)
 {
 	//SAFE_RELEASE(m_pAniSet);
-	SAFE_RELEASE(m_pFont);
+	//SAFE_RELEASE(m_pFont);
+	SAFE_DELETE(m_pHUD);
 	if(m_pRootFrame)
 	{
 		cAllocateHierarchy Alloc;
@@ -49,23 +51,11 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 {
 	SetActionTime(2.0f);
 	SetCurAni(ANI_SET::IDLE);
-	D3DXFONT_DESC fd;
-	ZeroMemory(&fd, sizeof(D3DXFONT_DESC));
-	fd.Height = 20;
-	fd.Width = 10;
-	fd.Weight = FW_MEDIUM;
-	fd.Italic = false;
-	fd.CharSet = DEFAULT_CHARSET;
-	fd.OutputPrecision = OUT_DEFAULT_PRECIS;
-	fd.PitchAndFamily = FF_DONTCARE;
-	//strcpy_s(fd.FaceName, "궁서체");//글꼴 스타일
-	// ttf 사용하기
-	AddFontResource("umberto.ttf");
-	strcpy_s(fd.FaceName, "umberto");//글꼴 스타일
-
-	HRESULT hr = D3DXCreateFontIndirect(g_pD3DDevice, &fd, &m_pFont);
-	assert(S_OK == hr);
-
+	
+	m_pHUD = new cHUD;
+	m_pHUD->Setup(D3DXVECTOR3(5.0f, 5.0f, 0.0f));
+	m_pHUD->ChangeFontSize(7, 12);
+	
 	cAllocateHierarchy Alloc;
 	Alloc.SetFolder("Zealot/");
 	D3DXLoadMeshHierarchyFromX(
@@ -81,7 +71,6 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 	m_pAnimControl->GetAnimationSet(ANI_SET::IDLE, &pAniSet);
 	m_pAnimControl->SetTrackAnimationSet(m_dwCurTrack, pAniSet);
 	SAFE_RELEASE(pAniSet);
-
 	
 	m_Perv = m_pAnimControl->GetTime();
 
@@ -126,17 +115,14 @@ void cSkinnedMesh::Update()
 	if (GetKeyState('1') & 0x8000)
 	{
 		m_eNewAni = ANI_SET::ATTECK1;
-		//SetAnimationIndex(0);		
 	}
 	if (GetKeyState('2') & 0x8000)
 	{
 		m_eNewAni = ANI_SET::ATTECK2;
-		//SetAnimationIndex(0);
 	}
 	if (GetKeyState('3') & 0x8000)
 	{
 		m_eNewAni = ANI_SET::ATTECK3;
-		//SetAnimationIndex(0);
 	}
 	if (GetKeyState('W') & 0x8000)
 	{
@@ -165,23 +151,12 @@ void cSkinnedMesh::Update()
 		m_vForward = D3DXVECTOR3(0, 0, -1);
 		D3DXVec3TransformNormal(&m_vForward, &m_vForward, &matR);
 	}
-	//if (!(GetKeyState('W') & 0x8000)
-	//	&& !(GetKeyState('A') & 0x8000)
-	//	&& !(GetKeyState('S') & 0x8000)
-	//	&& !(GetKeyState('D') & 0x8000))
-	//{
-	//	m_eNewAni = ANI_SET::IDLE;
-	//}
-
+	
 	if (m_eCurAni != m_eNewAni)
 	{
-		//animation change
 		SetAnimationIndex(0);
 	}
-
-
-
-
+	
 	LPD3DXANIMATIONSET pAs;
 	m_pAnimControl->GetAnimationSet(m_dwCurTrack, &pAs);
 	D3DXTRACK_DESC de;
@@ -206,8 +181,7 @@ void cSkinnedMesh::Update()
 		&& m_eCurAni <= ANI_SET::ATTECK3)
 	{
 		atteck = "atteck!";
-		//m_pAnimControl->ResetTime();
-	}
+	}	
 	else
 	{
 		atteck = "...";
@@ -217,7 +191,6 @@ void cSkinnedMesh::Update()
 
 	m_pAnimControl->AdvanceTime(g_pTimeManager->GetDeltaTime(), NULL);
 
-
 	D3DXMATRIXA16 matT, matR;
 	D3DXMatrixRotationY(&matR, m_fAngle);
 	D3DXMatrixTranslation(&matT, m_vPosition.x, m_vPosition.y, m_vPosition.z);
@@ -225,8 +198,6 @@ void cSkinnedMesh::Update()
 	m_matWorld = matR * matT;
 	UpdateWorldMatrix(m_pRootFrame, NULL);
 	UpdateSkinnedMesh(m_pRootFrame);
-
-	//m_vPervPos = m_vPosition;
 }
 
 void cSkinnedMesh::Render()
@@ -260,15 +231,10 @@ void cSkinnedMesh::UpdateWorldMatrix( D3DXFRAME* pFrame, D3DXMATRIXA16* pmatPare
 
 void cSkinnedMesh::Render( D3DXFRAME* pFrame )
 {
-	RECT rc;
-	SetRect(&rc, 10, 10, 101, 101);
+	//head up display
 	char szTemp[1024];
 	sprintf(szTemp, "Ani No:%d,\n desc: %s", GetCurrentAni(), m_chDesc);
-	
-	m_pFont->DrawTextA(NULL, szTemp, strlen(szTemp),
-		&rc, DT_LEFT | DT_TOP | DT_NOCLIP, D3DCOLOR_XRGB(255, 0, 0));
-	
-	
+	m_pHUD->Render(szTemp);
 
 	ST_BONE* pBone = (ST_BONE*)pFrame;
 	D3DXMATRIXA16 matW;
@@ -298,8 +264,6 @@ void cSkinnedMesh::Render( D3DXFRAME* pFrame )
 	{
 		Render(pBone->pFrameFirstChild);
 	}
-
-
 }
 
 void cSkinnedMesh::SetAnimationIndex(DWORD dwIndex)
@@ -322,48 +286,12 @@ void cSkinnedMesh::SetAnimationIndex(DWORD dwIndex)
 	m_pAnimControl->KeyTrackSpeed(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), MOVE_TRANSITION_TIME, D3DXTRANSITION_LINEAR);
 	m_pAnimControl->KeyTrackWeight(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), MOVE_TRANSITION_TIME, D3DXTRANSITION_LINEAR);
 	
-	//m_pAnimControl->KeyTrackEnable(m_dwCurTrack, FALSE, m_pAnimControl->GetTime() + pNewAni->GetPeriod());
-	//m_pAnimControl->KeyTrackSpeed(m_dwCurTrack, 0.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-	//m_pAnimControl->KeyTrackWeight(m_dwCurTrack, 0.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-	//            
-	//m_pAnimControl->SetTrackEnable(dwNewTrack, TRUE);
-	//m_pAnimControl->KeyTrackSpeed(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-	//m_pAnimControl->KeyTrackWeight(dwNewTrack, 1.0f, m_pAnimControl->GetTime(), pNewAni->GetPeriod(), D3DXTRANSITION_LINEAR);
-
+	
 	m_pAnimControl->SetTrackPosition(dwNewTrack, 0);
 	m_dwCurTrack = dwNewTrack;
 	m_eCurAni = m_eNewAni;
 //	SAFE_RELEASE(pCurAni);
-	SAFE_RELEASE(pNewAni);
-	/*m_pAnimControl->GetAnimationSet(dwIndex2, &pAnimationSet2);
-	
-	
-	
-	D3DXTRACK_DESC desc;
-	m_pAnimControl->GetTrackDesc(0, &desc);	
-
-	float tt = (float)desc.Position /(float) ani_1;
-	m_pAnimControl->SetTrackAnimationSet(0, pAnimationSet);
-	m_pAnimControl->SetTrackAnimationSet(1, pAnimationSet2);	
-	
-	m_pAnimControl->SetTrackWeight(0, tt);
-	m_pAnimControl->SetTrackWeight(1, 1 - tt);
-
-	m_pAnimControl->SetTrackEnable(0, TRUE);
-	m_pAnimControl->SetTrackEnable(1, FALSE);
-	
-	
-
-	m_pAnimControl->SetTrackSpeed(0, 1.0f);
-	m_pAnimControl->SetTrackSpeed(1, 1.0f);
-
-	m_pAnimControl->SetTrackPriority(0, D3DXPRIORITY_HIGH);
-	m_pAnimControl->SetTrackPriority(1, D3DXPRIORITY_HIGH);
-	
-	m_pAnimControl->ResetTime();
-
-	SAFE_RELEASE(pAnimationSet);
-	SAFE_RELEASE(pAnimationSet2);*/
+	SAFE_RELEASE(pNewAni);	
 }
 
 void cSkinnedMesh::SetupBoneMatrixPtrs( D3DXFRAME* pFrame )
@@ -451,27 +379,9 @@ void cSkinnedMesh::UpdateSkinnedMesh( D3DXFRAME* pFrame )
 	}
 }
 
-//void cSkinnedMesh::SetMoveNext(const D3DXVECTOR3& nextNode)
-//{
-//	m_vDestinationPos = nextNode;
-//}
-
-//void cSkinnedMesh::SetObserver(iObserver* observer)
-//{
-//	if (m_nStNode != -1)
-//		observer->SetDijkstra(m_nStNode, m_nDestNode);
-//	m_iObser = observer;
-//}
-//
-//void cSkinnedMesh::Notify()
-//{
-//	m_iObser->UpdateSubject((*this));
-//}
-
 void cSkinnedMesh::SetDelegate(iNodeMapDelegate* dele)
 {
 	m_pDelegate = dele;
-	//dynamic_cast<cNodeMap*>(m_pDelegate)->CalcDijkstra(m_nStNode, m_nDestNode);
 }
 
 void cSkinnedMesh::SetDestNode(int n)

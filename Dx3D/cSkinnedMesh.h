@@ -1,8 +1,9 @@
 #pragma once
 #define MOVE_TRANSITION_TIME 0.25f
 __interface iNodeMapDelegate;
+class cHUD;
 class cSkinnedMesh
-	:/*public iMove, */public iSubject
+	//:/*public iMove, */public iSubject
 {
 public:
 	enum ANI_SET { ATTECK1 = 0, ATTECK2, ATTECK3, RUN, IDLE, MAX};
@@ -23,12 +24,13 @@ private:
 	ANI_SET			m_ePervAni;
 
 	float			m_Perv;
-	BOOL			m_bState;
 
 	char			m_chDesc[1024];
 	char			m_chAtteck[1024];
 	DOUBLE			m_bTrackPos;
-	LPD3DXFONT		m_pFont;
+	//LPD3DXFONT		m_pFont;
+	//HUD 
+	cHUD*			m_pHUD;
 
 	//dijkstra 
 	D3DXVECTOR3		m_vForward;

@@ -273,7 +273,7 @@ void cNodeMap::OnActionFinish(cSkinnedMesh* mesh)
 
 void cNodeMap::CalcDijkstra(int start, int dest)
 {
-	m_pDijkstra->CalcDijkstra(m_vecNode.size(), m_vecEdge, start, dest, m_vecDest);
+//	m_pDijkstra->CalcDijkstra(m_vecNode.size(), m_vecEdge, start, dest, m_vecDest);
 }
 
 void cNodeMap::OnNewWay(int st, int dest)
