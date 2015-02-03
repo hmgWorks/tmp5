@@ -4,9 +4,12 @@
 */
 #define MOVE_TRANSITION_TIME 0.25f
 __interface iNodeMapDelegate;
+class cPicking;
 class cHUD;
+class cBoundingSphere;
+
 class cSkinnedMesh
-	//:/*public iMove, */public iSubject
+	: public iPickObj//:/*public iMove, */public iSubject
 {
 public:
 	enum ANI_SET { ATTECK1 = 0, ATTECK2, ATTECK3, RUN, IDLE, MAX};
@@ -24,8 +27,22 @@ public:
 	void SetAnimationIndex(DWORD dwIndex);
 	
 	inline ANI_SET GetCurrentAni()	{ return m_eCurAni; }
+	
 	inline D3DXVECTOR3& GetPosition() { return m_vPosition; }
 	inline void SetPosition(D3DXVECTOR3& position) { m_vPosition = position; }
+	
+	inline D3DXVECTOR3& GetPervPosition() { return m_vPervPosition; }
+	inline void SetPervPosition(D3DXVECTOR3& position) { m_vPervPosition = position; }
+
+	inline D3DXVECTOR3& GetDestPosition() { return m_vDestinationPos; }
+	inline void SetDestPosition(D3DXVECTOR3& position) { m_vDestinationPos = position; }
+
+
+private:
+	void UpdateWorldMatrix(D3DXFRAME* pFrame, D3DXMATRIXA16* pmatParent);
+	void Render(D3DXFRAME* pFrame);
+	void SetupBoneMatrixPtrs(D3DXFRAME* pFrame);
+	void UpdateSkinnedMesh(D3DXFRAME* pFrame);
 
 private:	
 	
@@ -55,22 +72,21 @@ private:
 	D3DXMATRIXA16	m_matWorld;
 	//
 	D3DXVECTOR3 m_vPosition;
-
+	D3DXVECTOR3 m_vPervPosition;
+	D3DXVECTOR3 m_vDestinationPos;
 	SYNTHESIZE(float, m_fActionTime, ActionTime);
 	SYNTHESIZE(float, m_fPassedTime, PassedTime);
 
+	//picking
+	cBoundingSphere* m_pSphere;
+	bool m_bIsPick;
+public:	
 
-private:
-	void UpdateWorldMatrix(D3DXFRAME* pFrame, D3DXMATRIXA16* pmatParent);
-	void Render(D3DXFRAME* pFrame);
-	void SetupBoneMatrixPtrs(D3DXFRAME* pFrame);
-	void UpdateSkinnedMesh( D3DXFRAME* pFrame );
-
-public:
 	//virtual void SetMoveNext(const D3DXVECTOR3& nextNode) override;
 	//virtual void SetObserver(iObserver* observer) override;
 	//virtual void Notify() override;
-
-	
+	cPicking* m_pPicker;
+	virtual void OnPick() override;
+	virtual void OnMove(D3DXVECTOR3& pos) override;
 };
 

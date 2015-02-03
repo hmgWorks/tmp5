@@ -4,6 +4,9 @@
 #include "cMtlTex.h"
 #include "cNodeMap.h"
 #include "cHUD.h"
+#include "cBoundingSphere.h"
+#include "cPicking.h"
+
 
 cSkinnedMesh::cSkinnedMesh(void)
 	: m_pRootFrame(NULL)
@@ -17,9 +20,12 @@ cSkinnedMesh::cSkinnedMesh(void)
 	, m_vForward(0, 0, -1)
 	, m_fAngle(0.0f)
 	, m_fSpeed(0.05f)
-	, m_fActionTime(0.0f)
+	, m_fActionTime(1.0f)
 	, m_fPassedTime(0.0f)
 	, m_pHUD(NULL)
+	, m_pSphere(NULL)
+	, m_pPicker(NULL)
+	, m_bIsPick(FALSE)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 }
@@ -27,6 +33,7 @@ cSkinnedMesh::cSkinnedMesh(void)
 
 cSkinnedMesh::~cSkinnedMesh(void)
 {
+	SAFE_DELETE(m_pSphere);
 	//SAFE_RELEASE(m_pAniSet);
 	//SAFE_RELEASE(m_pFont);
 	SAFE_DELETE(m_pHUD);
@@ -46,6 +53,9 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 	m_pHUD->Setup(D3DXVECTOR3(5.0f, 5.0f, 0.0f));
 	m_pHUD->ChangeFontSize(7, 12);
 	
+	m_pSphere = new cBoundingSphere;
+	m_pSphere->Setup(&m_vPosition, 0.6f);
+
 	cAllocateHierarchy Alloc;
 	Alloc.SetFolder("Zealot/");
 	D3DXLoadMeshHierarchyFromX(
@@ -70,25 +80,25 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 void cSkinnedMesh::Update()
 {
 	//
-	/*if (m_eCurAni == ANI_SET::RUN)
+	if (m_eCurAni == ANI_SET::RUN)
 	{
 		m_fPassedTime += g_pTimeManager->GetDeltaTime();
 
 		float t = m_fPassedTime / m_fActionTime;
 		if (t < 1.0f)
 		{
-			D3DXVec3Lerp(&m_vPosition, &m_vPervPos, &m_vDestinationPos, t);
-			D3DXVECTOR3 v = m_vPervPos - m_vDestinationPos;
+			D3DXVec3Lerp(&m_vPosition, &m_vPervPosition, &m_vDestinationPos, t);
+			D3DXVECTOR3 v = m_vPosition - m_vDestinationPos;
 			m_fAngle = atan2(v.x, v.z);
 		}
 		else
 		{
-			if (m_pDelegate)
-				m_pDelegate->OnActionFinish(this);
+			//if (m_pDelegate)
+			//	m_pDelegate->OnActionFinish(this);
 			m_fPassedTime = 0.0f;
 
 		}
-	}*/
+	}
 		
 
 	if (GetKeyState('1') & 0x8000)
@@ -110,7 +120,7 @@ void cSkinnedMesh::Update()
 	}
 	else
 	{
-		m_eNewAni = ANI_SET::IDLE;
+		//m_eNewAni = ANI_SET::IDLE;
 	}
 	if (GetKeyState('S') & 0x8000)
 	{
@@ -137,7 +147,7 @@ void cSkinnedMesh::Update()
 	
 	if (m_eCurAni != m_eNewAni)
 	{
-		SetAnimationIndex(0);
+		//SetAnimationIndex(0);
 	}
 	
 	LPD3DXANIMATIONSET pAs;
@@ -185,6 +195,9 @@ void cSkinnedMesh::Update()
 
 void cSkinnedMesh::Render()
 {
+	if (m_bIsPick)
+		m_pSphere->Render();
+
 	Render(m_pRootFrame);
 }
 
@@ -360,4 +373,17 @@ void cSkinnedMesh::UpdateSkinnedMesh( D3DXFRAME* pFrame )
 	{
 		UpdateSkinnedMesh(pBone->pFrameFirstChild);
 	}
+}
+
+void cSkinnedMesh::OnPick()
+{	
+	m_bIsPick = m_pPicker->RaySphereIntersectionTest(this);
+}
+
+void cSkinnedMesh::OnMove(D3DXVECTOR3& pos)
+{
+	m_eCurAni = ANI_SET::RUN;
+	m_vPervPosition = m_vPosition;
+	SetDestPosition(pos);
+	//SetAnimationIndex(0);
 }

@@ -11,6 +11,8 @@ class cCubeMan;
 class cSkinnedMesh;
 class cNodeMap;
 class cNodeGroup;
+class cPicking;
+class cPlan;
 
 class cMainGame : public cObject
 {
@@ -23,9 +25,13 @@ private:
 	LPD3DXFONT				m_pFont;
 	cCubeMan*				m_pCubeMan;
 	cSkinnedMesh*			m_pSkinnedMesh;
+	cSkinnedMesh*			m_pSkinnedMesh2;
 	int m_index;
 	cNodeGroup*				m_pNodeGroup;
-
+	
+	//picking
+	cPicking*	m_pPicker;
+	cPlan*		m_pPlan;
 public:
 	cMainGame(void);
 	~cMainGame(void);
@@ -33,6 +39,7 @@ public:
 	void Setup();
 	void Update();
 	void Render();
+
 	void WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 

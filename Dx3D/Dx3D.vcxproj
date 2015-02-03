@@ -87,6 +87,7 @@
     <ClInclude Include="cActionSeq.h" />
     <ClInclude Include="cAllocateHierarchy.h" />
     <ClInclude Include="cAseLoader.h" />
+    <ClInclude Include="cBoundingSphere.h" />
     <ClInclude Include="cCamera.h" />
     <ClInclude Include="cCircleRHW.h" />
     <ClInclude Include="cCube.h" />
@@ -109,12 +110,15 @@
     <ClInclude Include="cObject.h" />
     <ClInclude Include="cObjectManager.h" />
     <ClInclude Include="cObjLoader.h" />
+    <ClInclude Include="cPicking.h" />
+    <ClInclude Include="cPlan.h" />
     <ClInclude Include="cSkinnedMesh.h" />
     <ClInclude Include="cTeapot.h" />
     <ClInclude Include="cTextureManager.h" />
     <ClInclude Include="cTimeManager.h" />
     <ClInclude Include="cTransform.h" />
     <ClInclude Include="cWayPoint.h" />
+    <ClInclude Include="d3dUtility.h" />
     <ClInclude Include="Dx3D.h" />
     <ClInclude Include="cAction.h" />
     <ClInclude Include="iActionDelegate.h" />
@@ -123,6 +127,7 @@
     <ClInclude Include="iNodeMapDelegate.h" />
     <ClInclude Include="iObserver.h" />
     <ClInclude Include="iPathNavigation.h" />
+    <ClInclude Include="iPickObj.h" />
     <ClInclude Include="iSubject.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -134,6 +139,7 @@
     <ClCompile Include="cActionSeq.cpp" />
     <ClCompile Include="cAllocateHierarchy.cpp" />
     <ClCompile Include="cAseLoader.cpp" />
+    <ClCompile Include="cBoundingSphere.cpp" />
     <ClCompile Include="cCamera.cpp" />
     <ClCompile Include="cCircleRHW.cpp" />
     <ClCompile Include="cCube.cpp" />
@@ -156,6 +162,8 @@
     <ClCompile Include="cObject.cpp" />
     <ClCompile Include="cObjectManager.cpp" />
     <ClCompile Include="cObjLoader.cpp" />
+    <ClCompile Include="cPicking.cpp" />
+    <ClCompile Include="cPlan.cpp" />
     <ClCompile Include="cSkinnedMesh.cpp" />
     <ClCompile Include="cTeapot.cpp" />
     <ClCompile Include="cTextureManager.cpp" />

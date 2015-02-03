@@ -14,6 +14,9 @@
 #include "cSkinnedMesh.h"
 #include "cNodeMap.h"
 #include "cNodeGroup.h"
+#include "cPicking.h"
+#include "cPlan.h"
+
 
 cMainGame::cMainGame(void)
 	: m_pGrid(NULL)
@@ -23,22 +26,29 @@ cMainGame::cMainGame(void)
 	, m_pAseRoot(NULL)
 	, m_pCubeMan(NULL)
 	, m_pSkinnedMesh(NULL)
+	, m_pSkinnedMesh2(NULL)
 	, m_pNodeMap(NULL)
 	, m_index(0)
 	, m_pNodeGroup(NULL)
+	, m_pPicker(NULL)
+	, m_pPlan(NULL)
 {
 }
 
 
 cMainGame::~cMainGame(void)
 {
+	SAFE_DELETE(m_pPlan);
+	SAFE_DELETE(m_pPicker);
 	SAFE_DELETE(m_pNodeGroup);
 	SAFE_DELETE(m_pNodeMap);
 	SAFE_DELETE(m_pGrid);
 	SAFE_DELETE(m_pCamera);
 	SAFE_RELEASE(m_pFont);
 	SAFE_DELETE(m_pMap);
+
 	SAFE_DELETE(m_pSkinnedMesh);
+	SAFE_DELETE(m_pSkinnedMesh2);
 
 	if(m_pAseRoot)
 		m_pAseRoot->Destroy();
@@ -56,9 +66,25 @@ void cMainGame::Setup()
 	m_pNodeGroup->Setup(D3DXVECTOR3(5, 0, 5));
 	//m_pNodeMap = new cNodeMap;
 	//m_pNodeMap->Setup();
+	m_pPicker = new cPicking;
 	
+	m_pPlan = new cPlan;
+	m_pPlan->Setup();
+	m_pPlan->m_pPicker = m_pPicker;
+	m_pPlan->m_pPicker->AddObj(m_pPlan);
+
 	m_pSkinnedMesh = new cSkinnedMesh;
 	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
+	m_pSkinnedMesh->SetPosition(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pSkinnedMesh->m_pPicker = m_pPicker;
+	m_pSkinnedMesh->m_pPicker->AddObj(m_pSkinnedMesh);
+
+	m_pSkinnedMesh2 = new cSkinnedMesh;
+	m_pSkinnedMesh2->Setup(std::string("Zealot/"), std::string("zealot.X"));
+	m_pSkinnedMesh2->SetPosition(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+	m_pSkinnedMesh2->m_pPicker = m_pPicker;
+	m_pSkinnedMesh2->m_pPicker->AddObj(m_pSkinnedMesh2);
+	
 	//m_pSkinnedMesh->SetStNode(1);
 	//m_pSkinnedMesh->SetDestNode(8);	
 	//m_pSkinnedMesh->SetPosition(m_pNodeMap->GetNode(0));
@@ -136,8 +162,6 @@ void cMainGame::Update()
 	if(m_pCubeMan)
 		m_pCubeMan->Update(m_pMap);
 	
-
-
 	if (m_pSkinnedMesh)
 	{
 		/*if (g_pInputManager->GetKeyDownOnce(VK_RETURN))
@@ -146,6 +170,10 @@ void cMainGame::Update()
 			m_pSkinnedMesh->SetCurAni(cSkinnedMesh::ANI_SET::RUN);
 		}*/
 		m_pSkinnedMesh->Update();
+	}
+	if (m_pSkinnedMesh2)
+	{
+		m_pSkinnedMesh2->Update();
 	}
 
 	if(m_pCamera)
@@ -181,8 +209,15 @@ void cMainGame::Render()
 	if (m_pNodeMap)
 		m_pNodeMap->Render();	
 
+	//picking
+	if (m_pPlan)
+		m_pPlan->Render();
+
 	if(m_pSkinnedMesh)
 		m_pSkinnedMesh->Render();
+	if (m_pSkinnedMesh2)
+		m_pSkinnedMesh2->Render();
+	
 	//m_pCubeMan->Render();
 
 	D3DXMATRIXA16 matWorld;
@@ -195,9 +230,7 @@ void cMainGame::Render()
 	
 	if(m_pAseRoot)
 		m_pAseRoot->Render();
-
-	
-	
+		
  	/*RECT rc;
  	SetRect(&rc, 100, 100, 101, 101);
  	char szTemp[1024];
@@ -211,24 +244,27 @@ void cMainGame::Render()
 }
 
 void cMainGame::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
-{
+{	
 	if(m_pCamera)
 		m_pCamera->WndProc(hWnd, message, wParam, lParam);
+	if (m_pPicker)
+		m_pPicker->WndProc(hWnd, message, wParam, lParam);
+
 	g_pInputManager->WndProc(hWnd, message, wParam, lParam);
-	char ch;
+	
 	switch (message)
 	{
 	case WM_CHAR:
-		ch = wParam;		
-		m_index = (int)ch - 48;
+		//ch = wParam;		
+		//m_index = (int)ch - 48;
+		break;
+	case WM_LBUTTONDOWN:		
+
 		break;
 	case WM_RBUTTONDOWN:
 		{
 			int nX = LOWORD(lParam);
-			int nY = HIWORD(lParam);
-			//m_pCircle1->SetCenter(D3DXVECTOR2(nX, nY));
-			//static int n;
-			//m_pSkinnedMesh->SetAnimationIndex(n++);
+			int nY = HIWORD(lParam);			
 		}
 		
 		break;

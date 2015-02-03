@@ -70,6 +70,8 @@ public: virtual void Set##funName(varType var){\
 #include "iMove.h"
 #include "iNodeMapDelegate.h"
 #include "iPathNavigation.h"
+#include "iPickObj.h"
+
 
 #include "cObject.h"
 #include "cGameObject.h"
@@ -131,4 +133,10 @@ struct ST_ROT_SAMPLE
 {
 	int				nKey;
 	D3DXQUATERNION	q;
+};
+
+struct ST_RAY
+{
+	D3DXVECTOR3		origin;
+	D3DXVECTOR3		direction;
 };
