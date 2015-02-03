@@ -156,8 +156,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if(g_pMainGame)
-		g_pMainGame->WndProc(hWnd, message, wParam, lParam);
+	if (g_pMainGame)
+	{
+		g_pMainGame->WndProc(hWnd, message, wParam, lParam);		
+	}
 
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;

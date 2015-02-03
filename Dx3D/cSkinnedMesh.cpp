@@ -8,27 +8,17 @@
 cSkinnedMesh::cSkinnedMesh(void)
 	: m_pRootFrame(NULL)
 	, m_pAniSet(NULL)
-	, m_pAniSetNext(NULL)
-	, m_nCurtTrack(0)
 	, m_eCurAni(ANI_SET::IDLE)
 	, m_eNewAni(ANI_SET::IDLE)
-	, m_ePervAni(ANI_SET::IDLE)
 	, m_dwCurTrack(0)
 	, m_Perv(0.0f)
 	//, m_pFont(NULL)
-	, m_bTrackPos(0)
 	, m_vPosition(0.0f, 0.0f, 0.0f)
-	, m_vPervPos(0.0f, 0.0f, 0.0f)
-	, m_vDestinationPos(1.0f, 0.0f, 1.0f)
 	, m_vForward(0, 0, -1)
 	, m_fAngle(0.0f)
 	, m_fSpeed(0.05f)
-	, m_nStNode(-1)
-	, m_nDestNode(1)
 	, m_fActionTime(0.0f)
 	, m_fPassedTime(0.0f)
-	, m_pDelegate(NULL)
-	, m_nCurrNode(0)
 	, m_pHUD(NULL)
 {
 	D3DXMatrixIdentity(&m_matWorld);
@@ -77,21 +67,10 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 	SetupBoneMatrixPtrs(m_pRootFrame);
 }
 
-
-void cSkinnedMesh::AniAttack_1()
-{
-	
-}
-
-void cSkinnedMesh::AniRun()
-{
-	
-}
-
 void cSkinnedMesh::Update()
 {
 	//
-	if (m_eCurAni == ANI_SET::RUN)
+	/*if (m_eCurAni == ANI_SET::RUN)
 	{
 		m_fPassedTime += g_pTimeManager->GetDeltaTime();
 
@@ -109,7 +88,7 @@ void cSkinnedMesh::Update()
 			m_fPassedTime = 0.0f;
 
 		}
-	}
+	}*/
 		
 
 	if (GetKeyState('1') & 0x8000)
@@ -124,10 +103,14 @@ void cSkinnedMesh::Update()
 	{
 		m_eNewAni = ANI_SET::ATTECK3;
 	}
-	if (GetKeyState('W') & 0x8000)
+	if (g_pInputManager->GetKeyDown('W')/* & 0x8000*/)
 	{
 		m_eNewAni = ANI_SET::RUN;
 		m_vPosition += (m_vForward * m_fSpeed);
+	}
+	else
+	{
+		m_eNewAni = ANI_SET::IDLE;
 	}
 	if (GetKeyState('S') & 0x8000)
 	{
@@ -377,22 +360,4 @@ void cSkinnedMesh::UpdateSkinnedMesh( D3DXFRAME* pFrame )
 	{
 		UpdateSkinnedMesh(pBone->pFrameFirstChild);
 	}
-}
-
-void cSkinnedMesh::SetDelegate(iNodeMapDelegate* dele)
-{
-	m_pDelegate = dele;
-}
-
-void cSkinnedMesh::SetDestNode(int n)
-{
-	if (m_pDelegate)
-	{
-		m_pDelegate->OnActionStart(this);
-	}
-}
-
-int cSkinnedMesh::GetDestNode()
-{
-	return m_nDestNode;
 }

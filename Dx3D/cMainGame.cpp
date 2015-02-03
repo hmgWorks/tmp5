@@ -90,6 +90,7 @@ void cMainGame::Setup()
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
 	//m_pCamera->SetTarget(&m_pCubeMan->GetPosition());
+	m_pCamera->SetTarget(&m_pSkinnedMesh->GetPosition());
 
 	//폰트 생성
 	D3DXFONT_DESC fd;
@@ -139,11 +140,11 @@ void cMainGame::Update()
 
 	if (m_pSkinnedMesh)
 	{
-		if (g_pInputManager->GetKeyDownOnce(VK_RETURN))
+		/*if (g_pInputManager->GetKeyDownOnce(VK_RETURN))
 		{			
 			m_pSkinnedMesh->SetDestNode(m_index);
 			m_pSkinnedMesh->SetCurAni(cSkinnedMesh::ANI_SET::RUN);
-		}
+		}*/
 		m_pSkinnedMesh->Update();
 	}
 
@@ -213,6 +214,7 @@ void cMainGame::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
 	if(m_pCamera)
 		m_pCamera->WndProc(hWnd, message, wParam, lParam);
+	g_pInputManager->WndProc(hWnd, message, wParam, lParam);
 	char ch;
 	switch (message)
 	{

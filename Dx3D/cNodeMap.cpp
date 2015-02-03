@@ -251,7 +251,7 @@ void cNodeMap::Render()
 
 void cNodeMap::OnActionStart(cSkinnedMesh* mesh)
 {
-	CalcDijkstra(mesh->GetStNode(), mesh->GetDestNode());
+	//CalcDijkstra(mesh->GetStNode(), mesh->GetDestNode());
 }
 
 void cNodeMap::OnActionFinish(cSkinnedMesh* mesh)
@@ -266,9 +266,9 @@ void cNodeMap::OnActionFinish(cSkinnedMesh* mesh)
 	{
 		mesh->SetNewAni(cSkinnedMesh::ANI_SET::IDLE);
 	}
-	mesh->SetDestinationPos(m_vecNode[n]);
-	mesh->SetPervPos(mesh->GetPosition());
-	mesh->SetStNode(n);
+	//mesh->SetDestinationPos(m_vecNode[n]);
+	//mesh->SetPervPos(mesh->GetPosition());
+	//mesh->SetStNode(n);
 }
 
 void cNodeMap::CalcDijkstra(int start, int dest)
