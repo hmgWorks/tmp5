@@ -49,9 +49,9 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 	SetActionTime(2.0f);
 	SetCurAni(ANI_SET::IDLE);
 	
-	m_pHUD = new cHUD;
-	m_pHUD->Setup(D3DXVECTOR3(5.0f, 5.0f, 0.0f));
-	m_pHUD->ChangeFontSize(7, 12);
+	//m_pHUD = new cHUD;
+	//m_pHUD->Setup(D3DXVECTOR3(5.0f, 5.0f, 0.0f));
+	//m_pHUD->ChangeFontSize(7, 12);
 	
 	m_pSphere = new cBoundingSphere;
 	m_pSphere->Setup(&m_vPosition, 0.6f);
@@ -83,7 +83,7 @@ void cSkinnedMesh::Update()
 	if (m_eCurAni == ANI_SET::RUN)
 	{
 		m_fPassedTime += g_pTimeManager->GetDeltaTime();
-
+		AniRun();
 		float t = m_fPassedTime / m_fActionTime;
 		if (t < 1.0f)
 		{
@@ -94,93 +94,13 @@ void cSkinnedMesh::Update()
 		else
 		{
 			//if (m_pDelegate)
-			//	m_pDelegate->OnActionFinish(this);
+			//	m_pDelegate->OnActionFinish(this);			
+			m_eCurAni = ANI_SET::IDLE;
+			AniIdle();
 			m_fPassedTime = 0.0f;
 
 		}
-	}
-		
-
-	if (GetKeyState('1') & 0x8000)
-	{
-		m_eNewAni = ANI_SET::ATTECK1;
-	}
-	if (GetKeyState('2') & 0x8000)
-	{
-		m_eNewAni = ANI_SET::ATTECK2;
-	}
-	if (GetKeyState('3') & 0x8000)
-	{
-		m_eNewAni = ANI_SET::ATTECK3;
-	}
-	if (g_pInputManager->GetKeyDown('W')/* & 0x8000*/)
-	{
-		m_eNewAni = ANI_SET::RUN;
-		m_vPosition += (m_vForward * m_fSpeed);
-	}
-	else
-	{
-		//m_eNewAni = ANI_SET::IDLE;
-	}
-	if (GetKeyState('S') & 0x8000)
-	{
-		m_eNewAni = ANI_SET::IDLE;		
-	}
-
-	if (GetKeyState('A') & 0x8000)
-	{
-		m_fAngle -= 0.05f;
-		D3DXMATRIXA16 matR;
-		D3DXMatrixRotationY(&matR, m_fAngle);
-		m_vForward = D3DXVECTOR3(0, 0, -1);
-		D3DXVec3TransformNormal(&m_vForward, &m_vForward, &matR);
-	}
-
-	if (GetKeyState('D') & 0x8000)
-	{
-		m_fAngle += 0.05f;
-		D3DXMATRIXA16 matR;
-		D3DXMatrixRotationY(&matR, m_fAngle);
-		m_vForward = D3DXVECTOR3(0, 0, -1);
-		D3DXVec3TransformNormal(&m_vForward, &m_vForward, &matR);
-	}
-	
-	if (m_eCurAni != m_eNewAni)
-	{
-		//SetAnimationIndex(0);
-	}
-	
-	LPD3DXANIMATIONSET pAs;
-	m_pAnimControl->GetAnimationSet(m_dwCurTrack, &pAs);
-	D3DXTRACK_DESC de;
-	m_pAnimControl->GetTrackDesc(m_dwCurTrack, &de);
-	//m_bTrackPos = de.Position;
-	//memset(m_chAtteck, 0, 1024);
-	memset(m_chDesc, 0, 1024);
-	sprintf(m_chDesc, "%d, %.2f, %.2f, %.2f", de.Enable, de.Speed,de.Weight, de.Position);
-
-	/*if (de.Position > pAs->GetPeriod()+MOVE_TRANSITION_TIME)
-	{
-		m_eNewAni = ANI_SET::IDLE;
-		SetAnimationIndex(0);
-	}*/
-	char* atteck;
-	double aa = pAs->GetPeriodicPosition(m_pAnimControl->GetTime());/*
-	if (((pAs->GetPeriod() + MOVE_TRANSITION_TIME) /2 <=de.Position
-		&& (pAs->GetPeriod() + MOVE_TRANSITION_TIME)/2 >= de.Position)
-		|| ((pAs->GetPeriod() + MOVE_TRANSITION_TIME)/2 <=de.Position
-		&& (pAs->GetPeriod() + MOVE_TRANSITION_TIME) /2 >=de.Position)*/
-	if (pAs->GetPeriodicPosition(m_pAnimControl->GetTime()) > (pAs->GetPeriod()/*+MOVE_TRANSITION_TIME*/)/2
-		&& m_eCurAni <= ANI_SET::ATTECK3)
-	{
-		atteck = "atteck!";
 	}	
-	else
-	{
-		atteck = "...";
-	}
-
-	sprintf(m_chDesc, "%d, %.2f, %.2f, %.2f, %s\n%f", de.Enable, de.Speed, de.Weight, de.Position, atteck, aa);
 
 	m_pAnimControl->AdvanceTime(g_pTimeManager->GetDeltaTime(), NULL);
 
@@ -228,9 +148,10 @@ void cSkinnedMesh::UpdateWorldMatrix( D3DXFRAME* pFrame, D3DXMATRIXA16* pmatPare
 void cSkinnedMesh::Render( D3DXFRAME* pFrame )
 {
 	//head up display
-	char szTemp[1024];
-	sprintf(szTemp, "Ani No:%d,\n desc: %s", GetCurrentAni(), m_chDesc);
-	m_pHUD->Render(szTemp);
+	//char szTemp[1024];
+	//sprintf(szTemp, "Ani No:%d,\n desc: %s", GetCurrentAni(), m_chDesc);
+	
+	//m_pHUD->Render(szTemp);
 
 	ST_BONE* pBone = (ST_BONE*)pFrame;
 	D3DXMATRIXA16 matW;
@@ -377,7 +298,7 @@ void cSkinnedMesh::UpdateSkinnedMesh( D3DXFRAME* pFrame )
 
 void cSkinnedMesh::OnPick()
 {	
-	m_bIsPick = m_pPicker->RaySphereIntersectionTest(this);
+	m_pPicker->RaySphereIntersectionTest(this);	
 }
 
 void cSkinnedMesh::OnMove(D3DXVECTOR3& pos)
@@ -385,5 +306,26 @@ void cSkinnedMesh::OnMove(D3DXVECTOR3& pos)
 	m_eCurAni = ANI_SET::RUN;
 	m_vPervPosition = m_vPosition;
 	SetDestPosition(pos);
+	m_fPassedTime = 0.0f;
 	//SetAnimationIndex(0);
+}
+
+void cSkinnedMesh::AniRun()
+{
+	LPD3DXANIMATIONSET pAs;
+	m_pAnimControl->GetAnimationSet(ANI_SET::RUN, &pAs);
+	m_pAnimControl->SetTrackEnable(0, TRUE);
+	m_pAnimControl->SetTrackAnimationSet(0, pAs);
+	//m_pAnimControl->ResetTime();
+	
+}
+
+void cSkinnedMesh::AniIdle()
+{
+	LPD3DXANIMATIONSET pAs;
+	m_pAnimControl->GetAnimationSet(ANI_SET::IDLE, &pAs);
+	m_pAnimControl->SetTrackEnable(0, TRUE);
+	m_pAnimControl->SetTrackAnimationSet(0, pAs);
+	//m_pAnimControl->ResetTime();
+	
 }

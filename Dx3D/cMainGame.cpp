@@ -97,9 +97,12 @@ void cMainGame::Setup()
 	m_pGrid = new cGrid;
 	m_pGrid->Setup(30, 1);
 
-	//cHeightMap* pMap =new cHeightMap;
-	//pMap->Load("HeightMapData/HeightMap.raw", "HeightMapData/terrain.jpg");
-	//m_pMap = pMap;
+	cHeightMap* pMap =new cHeightMap;
+	pMap->m_pPicker = m_pPicker;
+	pMap->m_pPicker->AddObj(pMap);
+	pMap->Load("HeightMapData/HeightMap.raw", "HeightMapData/terrain.jpg");
+	m_pMap = pMap;
+
 
 	//std::string sFolder(RESOURCE_FOLDER);
 	//sFolder += std::string("ase/woman/");

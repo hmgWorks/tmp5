@@ -29,7 +29,7 @@ public:
 	inline ANI_SET GetCurrentAni()	{ return m_eCurAni; }
 	
 	inline D3DXVECTOR3& GetPosition() { return m_vPosition; }
-	inline void SetPosition(D3DXVECTOR3& position) { m_vPosition = position; }
+	inline void SetPosition(D3DXVECTOR3& position) { m_vPosition = position; m_vPervPosition = m_vPosition; }
 	
 	inline D3DXVECTOR3& GetPervPosition() { return m_vPervPosition; }
 	inline void SetPervPosition(D3DXVECTOR3& position) { m_vPervPosition = position; }
@@ -44,6 +44,8 @@ private:
 	void SetupBoneMatrixPtrs(D3DXFRAME* pFrame);
 	void UpdateSkinnedMesh(D3DXFRAME* pFrame);
 
+	void AniRun();
+	void AniIdle();
 private:	
 	
 	D3DXFRAME*					m_pRootFrame;

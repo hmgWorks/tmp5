@@ -4,6 +4,8 @@ class cPlan;
 __interface iPickObj;
 class cSkinnedMesh;
 
+class cHeightMap;
+
 class cPicking
 {
 public:
@@ -17,7 +19,8 @@ public:
 	void TransformRay();
 	//맞추었는지 테스트
 	bool RaySphereIntersectionTest(cSkinnedMesh* sphere);
-	D3DXVECTOR3 RayPlanIntersectionTest(cPlan* plan);
+	void RayPlanIntersectionTest(cPlan* plan);
+	void RayPlanIntersectionTest(cHeightMap* plan);
 	
 	void WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

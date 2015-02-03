@@ -1,11 +1,12 @@
 #include "StdAfx.h"
 #include "cHeightMap.h"
-
+#include "cPicking.h"
 
 cHeightMap::cHeightMap(void)
 	: m_pMesh(NULL)
 	, m_pTexture(NULL)
 	, m_nTileN(0)
+	, m_pPicker(NULL)
 {
 }
 
@@ -27,7 +28,7 @@ void cHeightMap::Load( char* szFilename, char* szTextureFilename, int nTileN /*=
 	m_pTexture = g_pTextureManager->GetTexture(szTextureFilename);
 
 	
-	std::vector<DWORD>			vecIndex;
+	//std::vector<DWORD>			vecIndex;
 
 	m_vecVertex.resize((nTileN + 1) * (nTileN + 1));
 	vecIndex.reserve(nTileN * nTileN * 2 * 3);
@@ -174,4 +175,15 @@ float cHeightMap::GetHeight( OUT bool& isLand, IN D3DXVECTOR3* pvPosition )
 	}
 
 	return 0.0f;
+}
+
+void cHeightMap::OnPick()
+{
+	if (m_pPicker)
+		m_pPicker->RayPlanIntersectionTest(this);
+}
+
+void cHeightMap::OnMove(D3DXVECTOR3& pos)
+{
+
 }

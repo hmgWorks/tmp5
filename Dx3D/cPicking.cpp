@@ -4,6 +4,7 @@
 #include "iPickObj.h"
 #include "cPlan.h"
 #include "cSkinnedMesh.h"
+#include "cHeightMap.h"
 
 cPicking::cPicking()
 	:m_pPlan(NULL)
@@ -51,6 +52,7 @@ void cPicking::TransformRay()
 
 bool cPicking::RaySphereIntersectionTest(cSkinnedMesh* sphere)
 {
+	
 	D3DXVECTOR3 qq;
 	qq = sphere->m_pSphere->GetCenter();
 	qq.y += 0.6f;
@@ -75,15 +77,26 @@ bool cPicking::RaySphereIntersectionTest(cSkinnedMesh* sphere)
 
 	//해가 >= 0일경우 구체를 교차 하는 것
 	if (s0 >= 0.0f || s1 >= 0.0f)
-	{	
-		m_pZealot = sphere;
-		return true;
+	{		
+		if (m_pZealot)
+		{
+			if (sphere != m_pZealot)
+			{
+				m_pZealot->m_bIsPick = false;
+				m_pZealot = sphere;
+				m_pZealot->m_bIsPick = true;
+			}		
+		}
+		else
+		{
+			m_pZealot = sphere;
+			m_pZealot->m_bIsPick = true;
+		}
 	}
 	
-	return false;
 }
 
-D3DXVECTOR3 cPicking::RayPlanIntersectionTest(cPlan* plan)
+void cPicking::RayPlanIntersectionTest(cPlan* plan)
 {
 	float u, v, fDist;
 	for (size_t i = 0; i < plan->m_vecVertex.size(); i += 3)
@@ -93,8 +106,43 @@ D3DXVECTOR3 cPicking::RayPlanIntersectionTest(cPlan* plan)
 		{	
 			D3DXVECTOR3 v = m_stRay.origin + (m_stRay.direction * fDist);			
 			if (m_pZealot)
-				m_pZealot->OnMove(v);
-			return v;
+			{
+				for (auto p : m_listObj)
+				{
+					if (p == m_pZealot)
+					{
+						m_pZealot->OnMove(v);
+					}
+				}				
+			}			
+		}		
+	}
+}
+
+void cPicking::RayPlanIntersectionTest(cHeightMap* plan)
+{
+	float u, v, fDist;
+	for (size_t i = 0; i < plan->vecIndex.size(); i += 3)
+	{
+		DWORD _0, _1, _2;
+		_0 = plan->vecIndex[i];
+		_1 = plan->vecIndex[i + 1];
+		_2 = plan->vecIndex[i + 2];
+			
+		if (D3DXIntersectTri(&plan->m_vecVertex[_0].p, &plan->m_vecVertex[_1].p, &plan->m_vecVertex[_2].p,
+			&m_stRay.origin, &m_stRay.direction, &u, &v, &fDist))
+		{
+			D3DXVECTOR3 v = m_stRay.origin + (m_stRay.direction * fDist);
+			if (m_pZealot)
+			{
+				for (auto p : m_listObj)
+				{
+					if (p == m_pZealot)
+					{
+						m_pZealot->OnMove(v);
+					}
+				}
+			}
 		}
 	}
 }
@@ -116,7 +164,7 @@ void cPicking::AddPlan(iPickObj* plan)
 }
 
 void cPicking::Notify()
-{
+{	
 	for (auto obj : m_listObj)
 	{
 		obj->OnPick();
@@ -135,6 +183,7 @@ void cPicking::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		y = HIWORD(lParam);
 		m_stRay = CalcPickingRay(x, y);
 		TransformRay();
+		
 		Notify();	
 	}
 	break;
@@ -142,6 +191,11 @@ void cPicking::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		m_isLButtonDown = false;
 	}
+	break;
+	case WM_RBUTTONDOWN:
+		m_pZealot->m_bIsPick = false;
+		m_pZealot = nullptr;
+
 	break;
 	}
 }

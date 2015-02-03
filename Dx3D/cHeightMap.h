@@ -1,14 +1,17 @@
 #pragma once
 #include "iMap.h"
+__interface iPickObj;
+class cPicking;
 
-class cHeightMap : public iMap
+class cHeightMap : public iMap, public iPickObj
 {
-private:
+public:
 	std::vector<ST_PNT_VERTEX>	m_vecVertex;
 	int					m_nTileN;
 	LPD3DXMESH			m_pMesh;
 	LPDIRECT3DTEXTURE9	m_pTexture;
 	D3DMATERIAL9		m_stMtl;
+	std::vector<DWORD>			vecIndex;
 public:
 	cHeightMap(void);
 	~cHeightMap(void);
@@ -19,5 +22,11 @@ public:
 	virtual void Render() override;
 
 	virtual float GetHeight(OUT bool& isLand, IN D3DXVECTOR3* pvPosition) override;
+
+	virtual void OnPick() override;
+	virtual void OnMove(D3DXVECTOR3& pos) override;
+	//void Update();
+
+	cPicking* m_pPicker;
 };
 
