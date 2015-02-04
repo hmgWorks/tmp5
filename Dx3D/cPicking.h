@@ -1,4 +1,7 @@
 #pragma once
+/*
+	height map 이용시에 보간 문제. 포인터간의 보간 이라 맵의 굴곡을 전혀 이용 하지 못함
+*/
 class cBoundingSphere;
 class cPlan;
 __interface iPickObj;
@@ -19,13 +22,13 @@ public:
 	void TransformRay();
 	//맞추었는지 테스트
 	bool RaySphereIntersectionTest(cSkinnedMesh* sphere);
-	void RayPlanIntersectionTest(cPlan* plan);
-	void RayPlanIntersectionTest(cHeightMap* plan);
+	bool RayPlanIntersectionTest(cPlan* plan);
+	bool RayPlanIntersectionTest(cHeightMap* plan);
 	
 	void WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	void AddObj(iPickObj* obj);
-	void Remove(iPickObj* obj);
+	void AddObj2(iPickObj* obj);
 	void Notify();
 	void AddPlan(iPickObj* plan);
 
@@ -35,5 +38,7 @@ private:
 	bool m_isLButtonDown;
 	iPickObj* m_pPlan;
 	std::list<iPickObj*> m_listObj;
+	std::list<iPickObj*> m_listObj2;
+
 };
 

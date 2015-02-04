@@ -12,7 +12,7 @@ public:
 	std::vector<ST_PC_VERTEX> m_vecVertex;
 	void Setup();
 	void Render();
-	virtual void OnPick() override;
+	virtual bool OnPick() override;
 	virtual void OnMove(D3DXVECTOR3& pos) override;
 	//void Update();
 

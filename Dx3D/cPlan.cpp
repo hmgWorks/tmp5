@@ -41,9 +41,9 @@ void cPlan::Render()
 	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PC_VERTEX));
 }
 
-void cPlan::OnPick()
+bool cPlan::OnPick()
 {
-	m_pPicker->RayPlanIntersectionTest(this);
+	return m_pPicker->RayPlanIntersectionTest(this);
 }
 
 void cPlan::OnMove(D3DXVECTOR3& pos)

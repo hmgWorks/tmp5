@@ -2,7 +2,7 @@
 __interface iPickObj
 {
 public:
-	void OnPick();
+	bool OnPick();
 	void OnMove(D3DXVECTOR3& pos);
 };
 

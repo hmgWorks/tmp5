@@ -92,11 +92,12 @@ bool cPicking::RaySphereIntersectionTest(cSkinnedMesh* sphere)
 			m_pZealot = sphere;
 			m_pZealot->m_bIsPick = true;
 		}
+		return true;
 	}
-	
+	return false;
 }
 
-void cPicking::RayPlanIntersectionTest(cPlan* plan)
+bool cPicking::RayPlanIntersectionTest(cPlan* plan)
 {
 	float u, v, fDist;
 	for (size_t i = 0; i < plan->m_vecVertex.size(); i += 3)
@@ -109,17 +110,19 @@ void cPicking::RayPlanIntersectionTest(cPlan* plan)
 			{
 				for (auto p : m_listObj)
 				{
-					if (p == m_pZealot)
+					if (p == m_pZealot && m_pZealot->m_bIsPick)
 					{
 						m_pZealot->OnMove(v);
 					}
 				}				
-			}			
+			}
+			return true;
 		}		
 	}
+	return false;
 }
 
-void cPicking::RayPlanIntersectionTest(cHeightMap* plan)
+bool cPicking::RayPlanIntersectionTest(cHeightMap* plan)
 {
 	float u, v, fDist;
 	for (size_t i = 0; i < plan->vecIndex.size(); i += 3)
@@ -137,14 +140,16 @@ void cPicking::RayPlanIntersectionTest(cHeightMap* plan)
 			{
 				for (auto p : m_listObj)
 				{
-					if (p == m_pZealot)
+					if (p == m_pZealot && m_pZealot->m_bIsPick)
 					{
 						m_pZealot->OnMove(v);
 					}
 				}
 			}
+			return true;
 		}
 	}
+	return false;
 }
 
 void cPicking::AddObj(iPickObj* obj)
@@ -152,20 +157,23 @@ void cPicking::AddObj(iPickObj* obj)
 	m_listObj.push_back(obj);
 }
 
-void cPicking::Remove(iPickObj* obj)
+
+
+void cPicking::AddObj2(iPickObj* obj)
 {
-	if (!m_listObj.empty())
-		m_listObj.remove(obj);
+	m_listObj2.push_back(obj);
 }
 
-void cPicking::AddPlan(iPickObj* plan)
-{
-	m_pPlan = plan;
-}
+
 
 void cPicking::Notify()
 {	
 	for (auto obj : m_listObj)
+	{
+		if (obj->OnPick())
+			return;
+	}
+	for (auto obj : m_listObj2)
 	{
 		obj->OnPick();
 	}

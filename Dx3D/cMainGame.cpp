@@ -71,7 +71,7 @@ void cMainGame::Setup()
 	m_pPlan = new cPlan;
 	m_pPlan->Setup();
 	m_pPlan->m_pPicker = m_pPicker;
-	m_pPlan->m_pPicker->AddObj(m_pPlan);
+	m_pPlan->m_pPicker->AddObj2(m_pPlan);
 
 	m_pSkinnedMesh = new cSkinnedMesh;
 	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
@@ -99,7 +99,7 @@ void cMainGame::Setup()
 
 	cHeightMap* pMap =new cHeightMap;
 	pMap->m_pPicker = m_pPicker;
-	pMap->m_pPicker->AddObj(pMap);
+	pMap->m_pPicker->AddObj2(pMap);
 	pMap->Load("HeightMapData/HeightMap.raw", "HeightMapData/terrain.jpg");
 	m_pMap = pMap;
 

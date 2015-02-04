@@ -88,7 +88,7 @@ void cSkinnedMesh::Update()
 		if (t < 1.0f)
 		{
 			D3DXVec3Lerp(&m_vPosition, &m_vPervPosition, &m_vDestinationPos, t);
-			D3DXVECTOR3 v = m_vPosition - m_vDestinationPos;
+			D3DXVECTOR3 v = m_vPosition - m_vDestinationPos;			
 			m_fAngle = atan2(v.x, v.z);
 		}
 		else
@@ -98,7 +98,6 @@ void cSkinnedMesh::Update()
 			m_eCurAni = ANI_SET::IDLE;
 			AniIdle();
 			m_fPassedTime = 0.0f;
-
 		}
 	}	
 
@@ -296,9 +295,9 @@ void cSkinnedMesh::UpdateSkinnedMesh( D3DXFRAME* pFrame )
 	}
 }
 
-void cSkinnedMesh::OnPick()
+bool cSkinnedMesh::OnPick()
 {	
-	m_pPicker->RaySphereIntersectionTest(this);	
+	return m_pPicker->RaySphereIntersectionTest(this);	
 }
 
 void cSkinnedMesh::OnMove(D3DXVECTOR3& pos)
@@ -307,7 +306,6 @@ void cSkinnedMesh::OnMove(D3DXVECTOR3& pos)
 	m_vPervPosition = m_vPosition;
 	SetDestPosition(pos);
 	m_fPassedTime = 0.0f;
-	//SetAnimationIndex(0);
 }
 
 void cSkinnedMesh::AniRun()

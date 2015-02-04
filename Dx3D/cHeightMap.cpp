@@ -177,10 +177,9 @@ float cHeightMap::GetHeight( OUT bool& isLand, IN D3DXVECTOR3* pvPosition )
 	return 0.0f;
 }
 
-void cHeightMap::OnPick()
+bool cHeightMap::OnPick()
 {
-	if (m_pPicker)
-		m_pPicker->RayPlanIntersectionTest(this);
+	return m_pPicker->RayPlanIntersectionTest(this);
 }
 
 void cHeightMap::OnMove(D3DXVECTOR3& pos)

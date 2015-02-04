@@ -23,7 +23,7 @@ public:
 
 	virtual float GetHeight(OUT bool& isLand, IN D3DXVECTOR3* pvPosition) override;
 
-	virtual void OnPick() override;
+	virtual bool OnPick() override;
 	virtual void OnMove(D3DXVECTOR3& pos) override;
 	//void Update();
 

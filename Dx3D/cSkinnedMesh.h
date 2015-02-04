@@ -88,7 +88,7 @@ public:
 	//virtual void SetObserver(iObserver* observer) override;
 	//virtual void Notify() override;
 	cPicking* m_pPicker;
-	virtual void OnPick() override;
+	virtual bool OnPick() override;
 	virtual void OnMove(D3DXVECTOR3& pos) override;
 };
 
