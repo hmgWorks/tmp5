@@ -38,7 +38,7 @@ public:
 	inline D3DXVECTOR3& GetDestPosition() { return m_vDestinationPos; }
 	inline void SetDestPosition(D3DXVECTOR3& position) { m_vDestinationPos = position; }
 
-
+	std::list<D3DXVECTOR3> m_vecDestList;
 private:
 	void UpdateWorldMatrix(D3DXFRAME* pFrame, D3DXMATRIXA16* pmatParent);
 	void Render(D3DXFRAME* pFrame);
@@ -91,5 +91,6 @@ public:
 	cPicking* m_pPicker;
 	virtual bool OnPick() override;
 	virtual void OnMove(D3DXVECTOR3& pos) override;
+	virtual void OnMoveAStar() override;
 };
 

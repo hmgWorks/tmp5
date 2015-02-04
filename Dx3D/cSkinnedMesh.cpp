@@ -84,7 +84,7 @@ void cSkinnedMesh::Update(iMap* pMap)
 	{
 		m_fPassedTime += g_pTimeManager->GetDeltaTime();
 		AniRun();
-		float t = m_fPassedTime / m_fActionTime;
+		float t = m_fPassedTime / 0.2f;// m_fActionTime;
 		if (t < 1.0f)
 		{
 			D3DXVec3Lerp(&m_vPosition, &m_vPervPosition, &m_vDestinationPos, t);
@@ -102,11 +102,7 @@ void cSkinnedMesh::Update(iMap* pMap)
 		}
 		else
 		{
-			//if (m_pDelegate)
-			//	m_pDelegate->OnActionFinish(this);			
-			m_eCurAni = ANI_SET::IDLE;
-			AniIdle();
-			m_fPassedTime = 0.0f;
+			OnMoveAStar();
 		}
 	}	
 
@@ -315,6 +311,24 @@ void cSkinnedMesh::OnMove(D3DXVECTOR3& pos)
 	m_vPervPosition = m_vPosition;
 	SetDestPosition(pos);
 	m_fPassedTime = 0.0f;
+}
+
+void cSkinnedMesh::OnMoveAStar()
+{
+	if (!m_vecDestList.empty())
+	{
+		m_eCurAni = ANI_SET::RUN;
+		m_vPervPosition = m_vPosition;	
+		SetDestPosition(m_vecDestList.front());
+		m_vecDestList.pop_front();
+		m_fPassedTime = 0.0f;
+	}
+	else
+	{
+		m_eCurAni = ANI_SET::IDLE;
+		AniIdle();
+		m_fPassedTime = 0.0f;
+	}
 }
 
 void cSkinnedMesh::AniRun()

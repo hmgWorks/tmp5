@@ -26,7 +26,7 @@ public:
 	void Render();
 	void initDirectData();
 	void initMapType();
-	void FindPath();
+	void FindPath(std::list<D3DXVECTOR3>* dest);
 	void ReadFile(const char* file);
 	cNode* FindNode(cNode::eNodeType type);
 	float CalcHeuristic(cNode* node1, cNode* node2);

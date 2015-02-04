@@ -172,8 +172,10 @@ bool cPicking::RayPlanIntersectionTest(cAStar* astar)
 						int x = m_pZealot->GetPosition().x;
 						int z = m_pZealot->GetPosition().z;
 						astar->m_vecNode[z*TILE_N + x]->SetNodeType(cNode::eNodeType::E_START);
-						astar->FindPath();
-						m_pZealot->OnMove(node->GetPosition());
+						m_pZealot->m_vecDestList.clear();
+						astar->FindPath(&m_pZealot->m_vecDestList);
+						m_pZealot->m_vecDestList.pop_front();
+						m_pZealot->OnMoveAStar();
 					}
 					return true;
 				}
