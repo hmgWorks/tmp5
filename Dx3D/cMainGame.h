@@ -9,15 +9,17 @@ class cMtlTex;
 class cFrame;
 class cCubeMan;
 class cSkinnedMesh;
-class cNodeMap;
-class cNodeGroup;
+//class cNodeMap;
+//class cNodeGroup;
 class cPicking;
 class cPlan;
+class cAStar;
 
 class cMainGame : public cObject
 {
 private:
-	cNodeMap*				m_pNodeMap;
+	//cNodeMap*				m_pNodeMap;
+	//cNodeGroup*				m_pNodeGroup;
 	cGrid*					m_pGrid;
 	cCamera*				m_pCamera;
 	iMap*					m_pMap;
@@ -27,11 +29,13 @@ private:
 	cSkinnedMesh*			m_pSkinnedMesh;
 	cSkinnedMesh*			m_pSkinnedMesh2;
 	int m_index;
-	cNodeGroup*				m_pNodeGroup;
 	
 	//picking
 	cPicking*	m_pPicker;
 	cPlan*		m_pPlan;
+
+	cAStar*		m_pAStar;
+
 public:
 	cMainGame(void);
 	~cMainGame(void);

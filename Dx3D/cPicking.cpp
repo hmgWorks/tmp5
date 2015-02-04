@@ -5,6 +5,7 @@
 #include "cPlan.h"
 #include "cSkinnedMesh.h"
 #include "cHeightMap.h"
+#include "cAStar.h"
 
 cPicking::cPicking()
 	:m_pPlan(NULL)
@@ -152,6 +153,36 @@ bool cPicking::RayPlanIntersectionTest(cHeightMap* plan)
 	return false;
 }
 
+bool cPicking::RayPlanIntersectionTest(cAStar* astar)
+{	
+	float u, v, fDist;
+	for (auto node : astar->m_vecNode)
+	{
+		if (node->GetNodeType() != cNode::eNodeType::E_WALL)
+		{
+			for (size_t i = 0; i < node->m_vecVertex.size(); i += 3)
+			{
+				if (D3DXIntersectTri(&node->m_vecVertex[i].p, &node->m_vecVertex[i + 1].p, &node->m_vecVertex[i + 2].p,
+					&m_stRay.origin, &m_stRay.direction, &u, &v, &fDist))
+				{
+					if (m_pZealot)
+					{
+						astar->ReasetNodeType();
+						node->SetNodeType(cNode::eNodeType::E_DEST);						
+						int x = m_pZealot->GetPosition().x;
+						int z = m_pZealot->GetPosition().z;
+						astar->m_vecNode[z*TILE_N + x]->SetNodeType(cNode::eNodeType::E_START);
+						astar->FindPath();
+						m_pZealot->OnMove(node->GetPosition());
+					}
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
 void cPicking::AddObj(iPickObj* obj)
 {
 	m_listObj.push_back(obj);
@@ -177,6 +208,8 @@ void cPicking::Notify()
 	{
 		obj->OnPick();
 	}
+	if (m_pZealot)
+		m_pAStar->OnClick();
 }
 
 void cPicking::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

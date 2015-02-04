@@ -87,6 +87,7 @@
     <ClInclude Include="cActionSeq.h" />
     <ClInclude Include="cAllocateHierarchy.h" />
     <ClInclude Include="cAseLoader.h" />
+    <ClInclude Include="cAStar.h" />
     <ClInclude Include="cBoundingSphere.h" />
     <ClInclude Include="cCamera.h" />
     <ClInclude Include="cCircleRHW.h" />
@@ -103,10 +104,9 @@
     <ClInclude Include="cIndexCube.h" />
     <ClInclude Include="cInputManiger.h" />
     <ClInclude Include="cMainGame.h" />
+    <ClInclude Include="cMaze.h" />
     <ClInclude Include="cMtlTex.h" />
     <ClInclude Include="cNode.h" />
-    <ClInclude Include="cNodeGroup.h" />
-    <ClInclude Include="cNodeMap.h" />
     <ClInclude Include="cObject.h" />
     <ClInclude Include="cObjectManager.h" />
     <ClInclude Include="cObjLoader.h" />
@@ -122,6 +122,7 @@
     <ClInclude Include="Dx3D.h" />
     <ClInclude Include="cAction.h" />
     <ClInclude Include="iActionDelegate.h" />
+    <ClInclude Include="iAStarMap.h" />
     <ClInclude Include="iMap.h" />
     <ClInclude Include="iMove.h" />
     <ClInclude Include="iNodeMapDelegate.h" />
@@ -139,6 +140,7 @@
     <ClCompile Include="cActionSeq.cpp" />
     <ClCompile Include="cAllocateHierarchy.cpp" />
     <ClCompile Include="cAseLoader.cpp" />
+    <ClCompile Include="cAStar.cpp" />
     <ClCompile Include="cBoundingSphere.cpp" />
     <ClCompile Include="cCamera.cpp" />
     <ClCompile Include="cCircleRHW.cpp" />
@@ -155,10 +157,9 @@
     <ClCompile Include="cIndexCube.cpp" />
     <ClCompile Include="cInputManiger.cpp" />
     <ClCompile Include="cMainGame.cpp" />
+    <ClCompile Include="cMaze.cpp" />
     <ClCompile Include="cMtlTex.cpp" />
     <ClCompile Include="cNode.cpp" />
-    <ClCompile Include="cNodeGroup.cpp" />
-    <ClCompile Include="cNodeMap.cpp" />
     <ClCompile Include="cObject.cpp" />
     <ClCompile Include="cObjectManager.cpp" />
     <ClCompile Include="cObjLoader.cpp" />
@@ -181,6 +182,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Dx3D.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

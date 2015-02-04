@@ -16,7 +16,7 @@
 #include "cNodeGroup.h"
 #include "cPicking.h"
 #include "cPlan.h"
-
+#include "cAStar.h"
 
 cMainGame::cMainGame(void)
 	: m_pGrid(NULL)
@@ -27,21 +27,23 @@ cMainGame::cMainGame(void)
 	, m_pCubeMan(NULL)
 	, m_pSkinnedMesh(NULL)
 	, m_pSkinnedMesh2(NULL)
-	, m_pNodeMap(NULL)
+	//, m_pNodeMap(NULL)
 	, m_index(0)
-	, m_pNodeGroup(NULL)
+	//, m_pNodeGroup(NULL)
 	, m_pPicker(NULL)
 	, m_pPlan(NULL)
+	, m_pAStar(NULL)
 {
 }
 
 
 cMainGame::~cMainGame(void)
 {
+	SAFE_DELETE(m_pAStar);
 	SAFE_DELETE(m_pPlan);
 	SAFE_DELETE(m_pPicker);
-	SAFE_DELETE(m_pNodeGroup);
-	SAFE_DELETE(m_pNodeMap);
+	//SAFE_DELETE(m_pNodeGroup);
+	//SAFE_DELETE(m_pNodeMap);
 	SAFE_DELETE(m_pGrid);
 	SAFE_DELETE(m_pCamera);
 	SAFE_RELEASE(m_pFont);
@@ -62,20 +64,27 @@ cMainGame::~cMainGame(void)
 
 void cMainGame::Setup()
 {
-	m_pNodeGroup = new cNodeGroup;
-	m_pNodeGroup->Setup(D3DXVECTOR3(5, 0, 5));
+	m_pPicker = new cPicking;
+
+	m_pAStar = new cAStar;
+	m_pAStar->Setup();
+	
+	m_pAStar->m_pPicker = m_pPicker;
+	m_pPicker->m_pAStar = m_pAStar;
+	//m_pNodeGroup = new cNodeGroup;
+	//m_pNodeGroup->Setup(D3DXVECTOR3(5, 0, 5));
 	//m_pNodeMap = new cNodeMap;
 	//m_pNodeMap->Setup();
-	m_pPicker = new cPicking;
 	
-	m_pPlan = new cPlan;
-	m_pPlan->Setup();
-	m_pPlan->m_pPicker = m_pPicker;
-	m_pPlan->m_pPicker->AddObj2(m_pPlan);
+
+	//m_pPlan = new cPlan;
+	//m_pPlan->Setup();
+	//m_pPlan->m_pPicker = m_pPicker;
+	//m_pPlan->m_pPicker->AddObj2(m_pPlan);
 
 	m_pSkinnedMesh = new cSkinnedMesh;
 	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
-	m_pSkinnedMesh->SetPosition(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pSkinnedMesh->SetPosition(D3DXVECTOR3(1.5f, 0.0f, 1.5f));
 	m_pSkinnedMesh->m_pPicker = m_pPicker;
 	m_pSkinnedMesh->m_pPicker->AddObj(m_pSkinnedMesh);
 
@@ -97,11 +106,11 @@ void cMainGame::Setup()
 	m_pGrid = new cGrid;
 	m_pGrid->Setup(30, 1);
 
-	cHeightMap* pMap =new cHeightMap;
-	pMap->m_pPicker = m_pPicker;
-	pMap->m_pPicker->AddObj2(pMap);
-	pMap->Load("HeightMapData/HeightMap.raw", "HeightMapData/terrain.jpg");
-	m_pMap = pMap;
+	//cHeightMap* pMap =new cHeightMap;
+	//pMap->m_pPicker = m_pPicker;
+	//pMap->m_pPicker->AddObj2(pMap);
+	//pMap->Load("HeightMapData/HeightMap.raw", "HeightMapData/terrain.jpg");
+	//m_pMap = pMap;
 
 
 	//std::string sFolder(RESOURCE_FOLDER);
@@ -204,18 +213,16 @@ void cMainGame::Render()
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 	m_pGrid->Render();
 	
-	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);	
 
-	if (m_pNodeGroup)
-		m_pNodeGroup->Render();
-
-	if (m_pNodeMap)
-		m_pNodeMap->Render();	
+	//a*
+	if (m_pAStar)
+		m_pAStar->Render();
 
 	//picking
-	if (m_pPlan)
-		m_pPlan->Render();
-
+	//if (m_pPlan)
+	//	m_pPlan->Render();
+	//
 	if(m_pSkinnedMesh)
 		m_pSkinnedMesh->Render();
 	if (m_pSkinnedMesh2)

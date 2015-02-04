@@ -122,7 +122,7 @@ void cHeightMap::Load( char* szFilename, char* szTextureFilename, int nTileN /*=
 
 void cHeightMap::Render()
 {
-	//g_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	g_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	g_pD3DDevice->SetMaterial(&m_stMtl);
 	g_pD3DDevice->SetTexture(0, m_pTexture);
 	m_pMesh->DrawSubset(0);

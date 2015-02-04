@@ -138,9 +138,6 @@
     <ClInclude Include="cNode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="cNodeMap.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="cDijkstra.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -159,9 +156,6 @@
     <ClInclude Include="iPathNavigation.h">
       <Filter>Interface</Filter>
     </ClInclude>
-    <ClInclude Include="cNodeGroup.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="cHUD.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -178,6 +172,15 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="iPickObj.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cMaze.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cAStar.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="iAStarMap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -284,13 +287,7 @@
     <ClCompile Include="cNode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="cNodeMap.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="cDijkstra.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="cNodeGroup.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="cHUD.cpp">
@@ -305,10 +302,19 @@
     <ClCompile Include="cPlan.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="cMaze.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cAStar.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Dx3D.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data.txt" />
   </ItemGroup>
 </Project>

@@ -2,11 +2,12 @@
 /*
 	height map 이용시에 보간 문제. 포인터간의 보간 이라 맵의 굴곡을 전혀 이용 하지 못함
 */
+__interface iPickObj;
+
 class cBoundingSphere;
 class cPlan;
-__interface iPickObj;
 class cSkinnedMesh;
-
+class cAStar;
 class cHeightMap;
 
 class cPicking
@@ -24,6 +25,7 @@ public:
 	bool RaySphereIntersectionTest(cSkinnedMesh* sphere);
 	bool RayPlanIntersectionTest(cPlan* plan);
 	bool RayPlanIntersectionTest(cHeightMap* plan);
+	bool RayPlanIntersectionTest(cAStar* astar);
 	
 	void WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -31,6 +33,7 @@ public:
 	void AddObj2(iPickObj* obj);
 	void Notify();
 	void AddPlan(iPickObj* plan);
+
 
 	cSkinnedMesh* m_pZealot;
 private:
@@ -40,5 +43,8 @@ private:
 	std::list<iPickObj*> m_listObj;
 	std::list<iPickObj*> m_listObj2;
 
+public:
+	//astar
+	cAStar* m_pAStar;
 };
 
