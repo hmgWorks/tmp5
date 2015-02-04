@@ -6,7 +6,7 @@
 #include "cHUD.h"
 #include "cBoundingSphere.h"
 #include "cPicking.h"
-
+#include "iMap.h"
 
 cSkinnedMesh::cSkinnedMesh(void)
 	: m_pRootFrame(NULL)
@@ -77,7 +77,7 @@ void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
 	SetupBoneMatrixPtrs(m_pRootFrame);
 }
 
-void cSkinnedMesh::Update()
+void cSkinnedMesh::Update(iMap* pMap)
 {
 	//
 	if (m_eCurAni == ANI_SET::RUN)
@@ -88,7 +88,16 @@ void cSkinnedMesh::Update()
 		if (t < 1.0f)
 		{
 			D3DXVec3Lerp(&m_vPosition, &m_vPervPosition, &m_vDestinationPos, t);
-			D3DXVECTOR3 v = m_vPosition - m_vDestinationPos;			
+			D3DXVECTOR3 v = m_vPosition - m_vDestinationPos;
+			if (pMap)
+			{
+				bool  isLand = false;
+				float fHeight = pMap->GetHeight(isLand, &m_vPosition);
+				if (true)
+				{
+					m_vPosition.y = fHeight;
+				}
+			}
 			m_fAngle = atan2(v.x, v.z);
 		}
 		else

@@ -172,11 +172,11 @@ void cMainGame::Update()
 			m_pSkinnedMesh->SetDestNode(m_index);
 			m_pSkinnedMesh->SetCurAni(cSkinnedMesh::ANI_SET::RUN);
 		}*/
-		m_pSkinnedMesh->Update();
+		m_pSkinnedMesh->Update(m_pMap);
 	}
 	if (m_pSkinnedMesh2)
 	{
-		m_pSkinnedMesh2->Update();
+		m_pSkinnedMesh2->Update(m_pMap);
 	}
 
 	if(m_pCamera)

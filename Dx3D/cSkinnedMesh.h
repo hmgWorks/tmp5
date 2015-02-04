@@ -7,6 +7,7 @@ __interface iNodeMapDelegate;
 class cPicking;
 class cHUD;
 class cBoundingSphere;
+class iMap;
 
 class cSkinnedMesh
 	: public iPickObj//:/*public iMove, */public iSubject
@@ -18,7 +19,7 @@ public:
 	cSkinnedMesh(void);
 	~cSkinnedMesh(void);
 	void Setup(std::string sFolder, std::string sFile);
-	void Update();
+	void Update(iMap* map);
 	void Render();
 	
 	//void SetDelegate(iNodeMapDelegate* dele);

@@ -14,7 +14,7 @@ cPlan::~cPlan()
 void cPlan::Setup()
 {
 	ST_PC_VERTEX v;
-	v.c = D3DCOLOR_XRGB(0, 0, 100);
+	v.c = D3DCOLOR_XRGB(150, 150, 150);
 	v.p = D3DXVECTOR3(-10.0f, 0.0f, 10.0f);
 	m_vecVertex.push_back(v);
 	v.p = D3DXVECTOR3(10.0f, 0.0f, 10.0f);
