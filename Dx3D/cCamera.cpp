@@ -57,6 +57,26 @@ void cCamera::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
 	switch (message)
 	{
+	/*
+	//화면 사이즈 변경시 picking시도 실패
+	case WM_PAINT: 
+	{
+		D3DXMATRIXA16 matView;
+		D3DXMatrixLookAtLH(&matView, &m_vEye, &m_vLookAt, &m_vUp);
+		g_pD3DDevice->SetTransform(D3DTS_VIEW, &matView);
+
+		D3DVIEWPORT9 vp;
+		g_pD3DDevice->GetViewport(&vp);
+		RECT rt;
+		GetClientRect(g_hWnd, &rt);
+		vp.Width = rt.right - rt.left;
+		vp.Height = rt.bottom - rt.top;
+		g_pD3DDevice->SetViewport(&vp);
+		D3DXMATRIXA16 matProj;
+		D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4.0f, vp.Width / (float)vp.Height, 1.0f, 10000.0f);
+		g_pD3DDevice->SetTransform(D3DTS_PROJECTION, &matProj);
+	}
+		break;*/
 	case WM_LBUTTONDOWN:
 		{
 			m_ptPrevMouse.x = LOWORD(lParam);

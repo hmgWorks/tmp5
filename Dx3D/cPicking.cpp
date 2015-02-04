@@ -201,8 +201,11 @@ void cPicking::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_RBUTTONDOWN:
-		m_pZealot->m_bIsPick = false;
-		m_pZealot = nullptr;
+		if (m_pZealot)
+		{
+			m_pZealot->m_bIsPick = false;
+			m_pZealot = nullptr;
+		}
 
 	break;
 	}

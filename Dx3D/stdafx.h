@@ -84,7 +84,8 @@ public: virtual void Set##funName(varType var){\
 
 #define INFINITYNUM 9000
 #define RESOURCE_FOLDER "../../Resources/"
-
+#define WINDOW_WIDTH 800
+#define WINDOW_HIEGHT 600
 struct ST_RHWC_VERTEX
 {
 	D3DXVECTOR4 p;

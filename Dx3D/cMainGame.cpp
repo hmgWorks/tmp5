@@ -256,7 +256,7 @@ void cMainGame::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 	g_pInputManager->WndProc(hWnd, message, wParam, lParam);
 	
 	switch (message)
-	{
+	{	
 	case WM_CHAR:
 		//ch = wParam;		
 		//m_index = (int)ch - 48;
