@@ -99,6 +99,8 @@
     <ClInclude Include="cGameObject.h" />
     <ClInclude Include="cGrid.h" />
     <ClInclude Include="cGroup.h" />
+    <ClInclude Include="cHeap.h" />
+    <ClInclude Include="cHeapNode.h" />
     <ClInclude Include="cHeightMap.h" />
     <ClInclude Include="cHUD.h" />
     <ClInclude Include="cIndexCube.h" />
@@ -152,6 +154,7 @@
     <ClCompile Include="cGameObject.cpp" />
     <ClCompile Include="cGrid.cpp" />
     <ClCompile Include="cGroup.cpp" />
+    <ClCompile Include="cHeapNode.cpp" />
     <ClCompile Include="cHeightMap.cpp" />
     <ClCompile Include="cHUD.cpp" />
     <ClCompile Include="cIndexCube.cpp" />

@@ -36,8 +36,9 @@ void cNode::Setup(int index, cNode::eNodeType e)
 		m_stMtl.Diffuse = D3DXCOLOR(0.0f, 0.4f, 0.0f, 1.0f);
 		m_stMtl.Specular = D3DXCOLOR(0.0f, 0.4f, 0.0f, 1.0f);
 
-		ST_PC_VERTEX v;
+		ST_PNC_VERTEX v;
 		v.c = D3DCOLOR_XRGB(100, 175, 0);
+		v.n = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 
 		v.p = D3DXVECTOR3(m_rc.left, 0.0f, m_rc.bottom);
 		m_vecVertex.push_back(v);
@@ -55,13 +56,13 @@ void cNode::Setup(int index, cNode::eNodeType e)
 	}
 	else
 	{
-		m_stMtl.Ambient = D3DXCOLOR(0.4f, 0.0f, 0.0f, 1.0f);
-		m_stMtl.Diffuse = D3DXCOLOR(0.4f, 0.0f, 0.0f, 1.0f);
-		m_stMtl.Specular = D3DXCOLOR(0.4f, 0.0f, 0.0f, 1.0f);
+		m_stMtl.Ambient = D3DXCOLOR(0.4f, 0.0f, 0.4f, 1.0f);
+		m_stMtl.Diffuse = D3DXCOLOR(0.4f, 0.0f, 0.4f, 1.0f);
+		m_stMtl.Specular = D3DXCOLOR(0.4f, 0.0f, 0.4f, 1.0f);
 
-		ST_PC_VERTEX v;
+		ST_PNC_VERTEX v;
 		v.c = D3DCOLOR_XRGB(175, 0, 0);
-
+		v.n = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 		//top
 		v.p = D3DXVECTOR3(m_rc.left, 1.0f, m_rc.bottom);
 		m_vecVertex.push_back(v);
@@ -78,6 +79,7 @@ void cNode::Setup(int index, cNode::eNodeType e)
 		m_vecVertex.push_back(v);
 
 		//front
+		v.n = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 		v.p = D3DXVECTOR3(m_rc.left, 0.0f, m_rc.bottom);
 		m_vecVertex.push_back(v);
 		v.p = D3DXVECTOR3(m_rc.right, 0.0f, m_rc.bottom);
@@ -93,6 +95,7 @@ void cNode::Setup(int index, cNode::eNodeType e)
 		m_vecVertex.push_back(v);
 
 		//back
+		v.n = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
 		v.p = D3DXVECTOR3(m_rc.right, 0.0f, m_rc.top);
 		m_vecVertex.push_back(v);
 		v.p = D3DXVECTOR3(m_rc.left, 0.0f, m_rc.top);
@@ -108,6 +111,7 @@ void cNode::Setup(int index, cNode::eNodeType e)
 		m_vecVertex.push_back(v);
 
 		//left
+		v.n = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
 		v.p = D3DXVECTOR3(m_rc.left, 0.0f, m_rc.top);
 		m_vecVertex.push_back(v);
 		v.p = D3DXVECTOR3(m_rc.left, 0.0f, m_rc.bottom);
@@ -123,6 +127,7 @@ void cNode::Setup(int index, cNode::eNodeType e)
 		m_vecVertex.push_back(v);
 
 		//right
+		v.n = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 		v.p = D3DXVECTOR3(m_rc.right, 0.0f, m_rc.bottom);
 		m_vecVertex.push_back(v);
 		v.p = D3DXVECTOR3(m_rc.right, 0.0f, m_rc.top);
@@ -250,12 +255,12 @@ void cNode::Render()
 	}
 	D3DXMATRIXA16 mat;
 	D3DXMatrixIdentity(&mat);
-	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 	g_pD3DDevice->SetMaterial(&m_stMtl);
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &mat);
 	g_pD3DDevice->SetTexture(0, NULL);
-	g_pD3DDevice->SetFVF(ST_PC_VERTEX::FVF);
-	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PC_VERTEX));
+	g_pD3DDevice->SetFVF(ST_PNC_VERTEX::FVF);
+	g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, m_vecVertex.size() / 3, &m_vecVertex[0], sizeof(ST_PNC_VERTEX));
 
 }
 

@@ -35,7 +35,7 @@ private:
 	RECT			m_rc;
 
 public:
-	std::vector<ST_PC_VERTEX> m_vecVertex;
+	std::vector<ST_PNC_VERTEX> m_vecVertex;
 	D3DMATERIAL9	m_stMtl;
 	D3DXVECTOR3		m_vPosition;
 
