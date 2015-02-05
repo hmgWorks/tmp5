@@ -7,11 +7,11 @@ public:
 	void Setup(D3DXVECTOR3* center, float radius);
 	void Render();
 
-private:
 	D3DXVECTOR3* m_vCenter;
 	float m_fRadius;
 	LPD3DXMESH m_pMeshSphere;
 	bool m_bIsPick;
+private:	
 
 public:
 	inline D3DXVECTOR3& GetCenter() { return (*m_vCenter); }

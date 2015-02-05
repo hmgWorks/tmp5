@@ -27,11 +27,11 @@
 #include <string>
 #include <assert.h>
 #include <d3dx9.h>
-	
+\
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
-
+//#pragma comment(lib, "winmm.lib")
 extern HWND g_hWnd;
 
 #define SAFE_RELEASE(p) if(p){p->Release(); p = NULL;}
@@ -89,6 +89,8 @@ public: virtual void Set##funName(varType var){\
 #define TILE_N 24
 #define TILE_SIZE 1
 
+#define SPHERE_COUND 100000
+#define SPHERE_RADIUS 5.0f
 struct ST_RHWC_VERTEX
 {
 	D3DXVECTOR4 p;

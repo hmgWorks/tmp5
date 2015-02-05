@@ -17,6 +17,8 @@
 #include "cPicking.h"
 #include "cPlan.h"
 #include "cAStar.h"
+#include "cCullingSphere.h"
+#include "cHUD.h"
 
 cMainGame::cMainGame(void)
 	: m_pGrid(NULL)
@@ -32,13 +34,18 @@ cMainGame::cMainGame(void)
 	//, m_pNodeGroup(NULL)
 	, m_pPicker(NULL)
 	, m_pPlan(NULL)
-	, m_pAStar(NULL)
+	, m_pAStar(NULL)	
+	, m_pSphere(NULL)
+	, m_pHUD(NULL)
+	, m_bCulling(false)
 {
 }
 
 
 cMainGame::~cMainGame(void)
 {
+	SAFE_DELETE(m_pHUD);
+	SAFE_RELEASE(m_pSphere);
 	SAFE_DELETE(m_pAStar);
 	SAFE_DELETE(m_pPlan);
 	SAFE_DELETE(m_pPicker);
@@ -64,13 +71,21 @@ cMainGame::~cMainGame(void)
 
 void cMainGame::Setup()
 {
-	m_pPicker = new cPicking;
-
-	m_pAStar = new cAStar;
-	m_pAStar->Setup();
+	m_pHUD = new cHUD;
+	m_pHUD->Setup(D3DXVECTOR3(5, 5, 0));
 	
-	m_pAStar->m_pPicker = m_pPicker;
-	m_pPicker->m_pAStar = m_pAStar;
+	InitSphere();
+	InitPlane();
+	//MakePlane();
+
+	//m_pPicker = new cPicking;
+	
+	//m_pAStar = new cAStar;
+	//m_pAStar->Setup();
+	
+	//m_pAStar->m_pPicker = m_pPicker;
+	//m_pPicker->m_pAStar = m_pAStar;
+
 	//m_pNodeGroup = new cNodeGroup;
 	//m_pNodeGroup->Setup(D3DXVECTOR3(5, 0, 5));
 	//m_pNodeMap = new cNodeMap;
@@ -82,17 +97,17 @@ void cMainGame::Setup()
 	//m_pPlan->m_pPicker = m_pPicker;
 	//m_pPlan->m_pPicker->AddObj2(m_pPlan);
 
-	m_pSkinnedMesh = new cSkinnedMesh;
-	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
-	m_pSkinnedMesh->SetPosition(D3DXVECTOR3(1.5f, 0.0f, 1.5f));
-	m_pSkinnedMesh->m_pPicker = m_pPicker;
-	m_pSkinnedMesh->m_pPicker->AddObj(m_pSkinnedMesh);
+	//m_pSkinnedMesh = new cSkinnedMesh;
+	//m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
+	//m_pSkinnedMesh->SetPosition(D3DXVECTOR3(1.5f, 0.0f, 1.5f));
+	//m_pSkinnedMesh->m_pPicker = m_pPicker;
+	//m_pSkinnedMesh->m_pPicker->AddObj(m_pSkinnedMesh);
 
-	m_pSkinnedMesh2 = new cSkinnedMesh;
-	m_pSkinnedMesh2->Setup(std::string("Zealot/"), std::string("zealot.X"));
-	m_pSkinnedMesh2->SetPosition(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
-	m_pSkinnedMesh2->m_pPicker = m_pPicker;
-	m_pSkinnedMesh2->m_pPicker->AddObj(m_pSkinnedMesh2);
+	//m_pSkinnedMesh2 = new cSkinnedMesh;
+	//m_pSkinnedMesh2->Setup(std::string("Zealot/"), std::string("zealot.X"));
+	//m_pSkinnedMesh2->SetPosition(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
+	//m_pSkinnedMesh2->m_pPicker = m_pPicker;
+	//m_pSkinnedMesh2->m_pPicker->AddObj(m_pSkinnedMesh2);
 	
 	//m_pSkinnedMesh->SetStNode(1);
 	//m_pSkinnedMesh->SetDestNode(8);	
@@ -128,7 +143,7 @@ void cMainGame::Setup()
 	m_pCamera = new cCamera;
 	m_pCamera->Setup();
 	//m_pCamera->SetTarget(&m_pCubeMan->GetPosition());
-	m_pCamera->SetTarget(&m_pSkinnedMesh->GetPosition());
+	//m_pCamera->SetTarget(&m_pSkinnedMesh->GetPosition());
 
 	//폰트 생성
 	D3DXFONT_DESC fd;
@@ -171,6 +186,11 @@ void cMainGame::Update()
 {
 	g_pTimeManager->Update();
 
+	if (g_pInputManager->GetKeyDownOnce(VK_SPACE))
+	{
+		m_bCulling = !m_bCulling;
+	}
+
 	if(m_pCubeMan)
 		m_pCubeMan->Update(m_pMap);
 	
@@ -197,6 +217,38 @@ void cMainGame::Update()
 	{
 		m_pAseRoot->Update(NULL, nKey);
 	}
+
+
+	
+	memset(m_pFPS, 0, 1024);
+	([this]()
+	{
+		static DWORD frameCount = 0;
+		static float timeElapsed = 0.0f;
+		static DWORD frameTotalCount = 0;
+		static DWORD lastTime = GetTickCount();//g_pTimeManager->GetDeltaTime();//timeGetTime();
+
+		DWORD curTime = GetTickCount();// g_pTimeManager->GetDeltaTime();//timeGetTime();
+
+		float timeDelta = (curTime - lastTime) *0.001f;
+
+		frameCount++;
+		timeElapsed += timeDelta;
+
+		if (timeElapsed >= 1.0f)
+		{
+			float fps = (float)frameCount / timeElapsed;
+
+			frameTotalCount = frameCount;
+			frameCount = 0;
+			timeElapsed = 0.0f;
+		}
+		sprintf(this->m_pFPS, "FPS: %d", frameTotalCount); // 문자열처리는 적당히 해준다
+		lastTime = curTime;
+	}());
+	//UpdateFPS();
+	
+
 }
 
 void cMainGame::Render()
@@ -215,6 +267,8 @@ void cMainGame::Render()
 	
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);	
 
+	m_pHUD->Render(m_pFPS);
+	DrawSphere();
 	//a*
 	if (m_pAStar)
 		m_pAStar->Render();
@@ -251,6 +305,155 @@ void cMainGame::Render()
 
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
+}
+
+void cMainGame::InitSphere()
+{
+	//m_vecSphere.resize(SPHERE_COUND);
+	ZeroMemory(&m_stMtl, sizeof(D3DMATERIAL9));
+	m_stMtl.Ambient = D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f);
+	m_stMtl.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	m_stMtl.Specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	for (size_t i = 0; i < SPHERE_COUND; i++)
+	{
+		cCullingSphere Sphere;
+		Sphere.m_vCenter.x = rand() % 10000 -5000;
+		Sphere.m_vCenter.y = rand() % 10000 -5000;
+		Sphere.m_vCenter.z = rand() % 10000 -5000;
+		Sphere.m_fRdius = SPHERE_RADIUS;
+		m_vecSphere.push_back(Sphere);
+	}
+
+	D3DXCreateSphere(g_pD3DDevice, SPHERE_RADIUS, 8, 8, &m_pSphere, NULL);
+}
+
+void cMainGame::InitPlane()
+{
+	//front
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, 1.0f, 0.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, 1.0f, 0.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, -1.0f, 0.0f));
+	//back
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, -1.0f, 1.0f));
+	//left
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, 1.0f, 0.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, -1.0f, 1.0f));
+	//right
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, 1.0f, 0.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, -1.0f, 0.0f));
+	//top
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, 1.0f, 0.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, 1.0f, 0.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	//bottom
+	m_vecVertex.push_back(D3DXVECTOR3(-1.0f, -1.0f, 1.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, -1.0f, 1.0f));
+	m_vecVertex.push_back(D3DXVECTOR3(1.0f, -1.0f, 0.0f));
+
+	/*m_vecVertex.resize(8);
+	m_vecVertex[0] = D3DXVECTOR3(-1.0f, -1.0f, 1.0f);*/
+}
+
+void cMainGame::MakePlane()
+{
+	//InitPlane();
+
+	D3DXMATRIXA16 matProj, matView, mat, matInvers;
+	g_pD3DDevice->GetTransform(D3DTS_PROJECTION, &matProj);
+	g_pD3DDevice->GetTransform(D3DTS_VIEW, &matView);
+	
+	m_vecPlane.resize(6);
+
+	mat = matView * matProj;
+	D3DXMatrixInverse(&matInvers, 0, &mat);
+
+	for (auto& virtex : m_vecVertex)
+	{
+		D3DXVec3TransformCoord(&virtex, &virtex, &matInvers);
+	}
+
+	D3DXPlaneFromPoints(&m_vecPlane[PLANE_FRONT], &m_vecVertex[F1], &m_vecVertex[F2], &m_vecVertex[F3]);
+	D3DXPlaneFromPoints(&m_vecPlane[PLANE_BACK], &m_vecVertex[B1], &m_vecVertex[B2], &m_vecVertex[B3]);
+	D3DXPlaneFromPoints(&m_vecPlane[PLANE_LEFT], &m_vecVertex[L1], &m_vecVertex[L2], &m_vecVertex[L3]);
+	D3DXPlaneFromPoints(&m_vecPlane[PLANE_RIGHT], &m_vecVertex[R1], &m_vecVertex[R2], &m_vecVertex[R3]);
+	D3DXPlaneFromPoints(&m_vecPlane[PLANE_NEAR], &m_vecVertex[T1], &m_vecVertex[T2], &m_vecVertex[T3]);
+	D3DXPlaneFromPoints(&m_vecPlane[PLANE_FAR], &m_vecVertex[BT1], &m_vecVertex[BT2], &m_vecVertex[BT3]);
+}
+
+bool cMainGame::IsInFrustom(cCullingSphere sphere)
+{
+	float fCheck = 0.0f;
+
+	fCheck = D3DXPlaneDotCoord(&m_vecPlane[PLANE_FRONT], &sphere.m_vCenter);
+	if (fCheck > 0.0f/* && fabs(fCheck)  > sphere.m_fRdius*/) return false;
+
+	fCheck = D3DXPlaneDotCoord(&m_vecPlane[PLANE_BACK], &sphere.m_vCenter);
+	if (fCheck > 0.0f/* && fabs(fCheck)  > sphere.m_fRdius*/) return false;
+
+	fCheck = D3DXPlaneDotCoord(&m_vecPlane[PLANE_LEFT], &sphere.m_vCenter);
+	if (fCheck > 0.0f/* && fabs(fCheck)  > sphere.m_fRdius*/) return false;
+
+	fCheck = D3DXPlaneDotCoord(&m_vecPlane[PLANE_RIGHT], &sphere.m_vCenter);
+	if (fCheck > 0.0f/* && fabs(fCheck)  > sphere.m_fRdius*/) return false;
+
+	fCheck = D3DXPlaneDotCoord(&m_vecPlane[PLANE_NEAR], &sphere.m_vCenter);
+	if (fCheck > 0.0f/* && fabs(fCheck)  > sphere.m_fRdius*/) return false;
+
+	fCheck = D3DXPlaneDotCoord(&m_vecPlane[PLANE_FAR], &sphere.m_vCenter);
+	if (fCheck > 0.0f/* && fabs(fCheck)  > sphere.m_fRdius*/) return false;
+
+	return true;	
+}
+
+void cMainGame::DrawSphere()
+{
+	static int n = 0;
+	static int n2 = 0;
+
+	char nn[1024];
+	memset(nn, 0, 1024);
+
+
+	InitPlane();
+	MakePlane();
+	D3DXMATRIXA16 matW;
+	D3DXMatrixIdentity(&matW);
+	g_pD3DDevice->SetTexture(0, NULL);
+	g_pD3DDevice->SetMaterial(&m_stMtl);
+	for (auto sphere : m_vecSphere)
+	{
+		if (m_bCulling)
+		{
+			if (IsInFrustom(sphere))
+			{
+				matW._41 = sphere.m_vCenter.x;
+				matW._42 = sphere.m_vCenter.y;
+				matW._43 = sphere.m_vCenter.z;
+				g_pD3DDevice->SetTransform(D3DTS_WORLD, &matW);
+				m_pSphere->DrawSubset(0);
+				
+				n++;
+			}
+		}
+		else
+		{
+			matW._41 = sphere.m_vCenter.x;
+			matW._42 = sphere.m_vCenter.y;
+			matW._43 = sphere.m_vCenter.z;
+			g_pD3DDevice->SetTransform(D3DTS_WORLD, &matW);
+			m_pSphere->DrawSubset(0);
+
+			n2++;
+		}
+				
+	}
+
+	sprintf(nn, "%d, %d\n ", n, n2);
+	OutputDebugString(nn);
 }
 
 void cMainGame::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )

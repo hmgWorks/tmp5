@@ -18,7 +18,7 @@ void cBoundingSphere::Setup(D3DXVECTOR3* center, float radius)
 {
 	SetCenter(center);
 	SetRadius(radius);
-	D3DXCreateSphere(g_pD3DDevice, GetRadius(), 10, 10, &m_pMeshSphere, NULL);
+	D3DXCreateSphere(g_pD3DDevice, GetRadius(), 100, 100, &m_pMeshSphere, NULL);
 }
 
 void cBoundingSphere::Render()
