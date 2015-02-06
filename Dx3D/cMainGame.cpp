@@ -73,6 +73,7 @@ void cMainGame::Setup()
 {
 	m_pHUD = new cHUD;
 	m_pHUD->Setup(D3DXVECTOR3(5, 5, 0));
+	m_pHUD->ChangeFontSize(25, 50);
 	
 	InitSphere();
 	InitPlane();
@@ -424,6 +425,7 @@ void cMainGame::DrawSphere()
 	D3DXMatrixIdentity(&matW);
 	g_pD3DDevice->SetTexture(0, NULL);
 	g_pD3DDevice->SetMaterial(&m_stMtl);
+
 	for (auto sphere : m_vecSphere)
 	{
 		if (m_bCulling)
