@@ -94,6 +94,7 @@ void cMainGame::Setup()
 	m_pSkinnedMesh2->m_pPicker = m_pPicker;
 	m_pSkinnedMesh2->m_pPicker->AddObj(m_pSkinnedMesh2);
 	
+
 	//m_pSkinnedMesh->SetStNode(1);
 	//m_pSkinnedMesh->SetDestNode(8);	
 	//m_pSkinnedMesh->SetPosition(m_pNodeMap->GetNode(0));
@@ -208,6 +209,33 @@ void cMainGame::Render()
 		//D3DCOLOR_XRGB(0, 0, 255),
 		1.0f, 0);
 	g_pD3DDevice->BeginScene();
+
+	//3dtext
+	HDC hdc = CreateCompatibleDC(0);
+	LOGFONT lf;
+	ZeroMemory(&lf, sizeof(LOGFONT));
+
+	lf.lfHeight = 25;
+	lf.lfWidth = 12;
+	lf.lfWeight = 500;
+	lf.lfItalic = false;
+	lf.lfUnderline = false;
+	lf.lfCharSet = DEFAULT_CHARSET;
+	strcpy(lf.lfFaceName, "Times New Roman");
+
+	HFONT hFont;
+	HFONT hFontOld;
+	hFont = CreateFontIndirect(&lf);
+	hFontOld = (HFONT)SelectObject(hdc, hFont);
+
+	LPD3DXMESH text = nullptr;
+	D3DXCreateText(g_pD3DDevice, hdc, "Direct3D", 0.001f, 0.001f, &text, 0, 0);
+
+	SelectObject(hdc, hFontOld);
+	DeleteObject(hFont);
+	DeleteDC(hdc);
+	text->DrawSubset(0);
+	text->Release();
 
 	// 그림을 그린다.
 	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
