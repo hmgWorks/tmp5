@@ -83,13 +83,13 @@ void cMainGame::Setup()
 	//m_pPlan->m_pPicker->AddObj2(m_pPlan);
 
 	m_pSkinnedMesh = new cSkinnedMesh;
-	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"));
+	m_pSkinnedMesh->Setup(std::string("Zealot/"), std::string("zealot.X"), "Marine1");
 	m_pSkinnedMesh->SetPosition(D3DXVECTOR3(1.5f, 0.0f, 1.5f));
 	m_pSkinnedMesh->m_pPicker = m_pPicker;
 	m_pSkinnedMesh->m_pPicker->AddObj(m_pSkinnedMesh);
 
 	m_pSkinnedMesh2 = new cSkinnedMesh;
-	m_pSkinnedMesh2->Setup(std::string("Zealot/"), std::string("zealot.X"));
+	m_pSkinnedMesh2->Setup(std::string("Zealot/"), std::string("zealot.X"), "Marine2");
 	m_pSkinnedMesh2->SetPosition(D3DXVECTOR3(2.0f, 0.0f, 0.0f));
 	m_pSkinnedMesh2->m_pPicker = m_pPicker;
 	m_pSkinnedMesh2->m_pPicker->AddObj(m_pSkinnedMesh2);
@@ -208,40 +208,13 @@ void cMainGame::Render()
 		D3DCOLOR_XRGB(33, 40, 48),
 		//D3DCOLOR_XRGB(0, 0, 255),
 		1.0f, 0);
-	g_pD3DDevice->BeginScene();
-
-	//3dtext
-	HDC hdc = CreateCompatibleDC(0);
-	LOGFONT lf;
-	ZeroMemory(&lf, sizeof(LOGFONT));
-
-	lf.lfHeight = 25;
-	lf.lfWidth = 12;
-	lf.lfWeight = 500;
-	lf.lfItalic = false;
-	lf.lfUnderline = false;
-	lf.lfCharSet = DEFAULT_CHARSET;
-	strcpy(lf.lfFaceName, "Times New Roman");
-
-	HFONT hFont;
-	HFONT hFontOld;
-	hFont = CreateFontIndirect(&lf);
-	hFontOld = (HFONT)SelectObject(hdc, hFont);
-
-	LPD3DXMESH text = nullptr;
-	D3DXCreateText(g_pD3DDevice, hdc, "Direct3D", 0.001f, 0.001f, &text, 0, 0);
-
-	SelectObject(hdc, hFontOld);
-	DeleteObject(hFont);
-	DeleteDC(hdc);
-	text->DrawSubset(0);
-	text->Release();
+	g_pD3DDevice->BeginScene();	
 
 	// 그림을 그린다.
-	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, false);
 	m_pGrid->Render();
 	
-	g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, true);	
+	if(m_pMap)
+		m_pMap->Render();
 
 	//a*
 	if (m_pAStar)
@@ -251,20 +224,13 @@ void cMainGame::Render()
 	//if (m_pPlan)
 	//	m_pPlan->Render();
 	//
-	if(m_pSkinnedMesh)
-		m_pSkinnedMesh->Render();
-	if (m_pSkinnedMesh2)
-		m_pSkinnedMesh2->Render();
+	
 	
 	//m_pCubeMan->Render();
 
 	D3DXMATRIXA16 matWorld;
 	D3DXMatrixIdentity(&matWorld);
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
-
-	if(m_pMap)
-		m_pMap->Render();
-
 	
 	if(m_pAseRoot)
 		m_pAseRoot->Render();
@@ -276,7 +242,10 @@ void cMainGame::Render()
  	m_pFont->DrawTextA(NULL, szTemp, strlen(szTemp),
  		&rc, DT_LEFT | DT_TOP | DT_NOCLIP, D3DCOLOR_XRGB(255,0,0));*/
 
-
+	if (m_pSkinnedMesh)
+		m_pSkinnedMesh->Render();
+	if (m_pSkinnedMesh2)
+		m_pSkinnedMesh2->Render();
 	g_pD3DDevice->EndScene();
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }

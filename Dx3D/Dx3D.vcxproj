@@ -112,6 +112,7 @@
     <ClInclude Include="cObject.h" />
     <ClInclude Include="cObjectManager.h" />
     <ClInclude Include="cObjLoader.h" />
+    <ClInclude Include="cOutputName.h" />
     <ClInclude Include="cPicking.h" />
     <ClInclude Include="cPlan.h" />
     <ClInclude Include="cSkinnedMesh.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="cObject.cpp" />
     <ClCompile Include="cObjectManager.cpp" />
     <ClCompile Include="cObjLoader.cpp" />
+    <ClCompile Include="cOutputName.cpp" />
     <ClCompile Include="cPicking.cpp" />
     <ClCompile Include="cPlan.cpp" />
     <ClCompile Include="cSkinnedMesh.cpp" />

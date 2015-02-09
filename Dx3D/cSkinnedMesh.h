@@ -8,6 +8,8 @@ class cPicking;
 class cHUD;
 class cBoundingSphere;
 class iMap;
+class cOutputName;
+
 
 class cSkinnedMesh
 	: public iPickObj//:/*public iMove, */public iSubject
@@ -18,7 +20,7 @@ public:
 public:
 	cSkinnedMesh(void);
 	~cSkinnedMesh(void);
-	void Setup(std::string sFolder, std::string sFile);
+	void Setup(std::string sFolder, std::string sFile, std::string sName);
 	void Update(iMap* map);
 	void Render();
 	
@@ -83,6 +85,11 @@ private:
 	//picking
 	cBoundingSphere* m_pSphere;
 	bool m_bIsPick;
+
+	//3D text
+	std::string m_strName;
+	cOutputName* m_pName;
+
 public:	
 
 	//virtual void SetMoveNext(const D3DXVECTOR3& nextNode) override;

@@ -7,6 +7,8 @@
 #include "cBoundingSphere.h"
 #include "cPicking.h"
 #include "iMap.h"
+#include "cOutputName.h"
+
 
 cSkinnedMesh::cSkinnedMesh(void)
 	: m_pRootFrame(NULL)
@@ -26,6 +28,7 @@ cSkinnedMesh::cSkinnedMesh(void)
 	, m_pSphere(NULL)
 	, m_pPicker(NULL)
 	, m_bIsPick(FALSE)
+	, m_pName(NULL)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 }
@@ -33,6 +36,7 @@ cSkinnedMesh::cSkinnedMesh(void)
 
 cSkinnedMesh::~cSkinnedMesh(void)
 {
+	SAFE_DELETE(m_pName);
 	SAFE_DELETE(m_pSphere);
 	//SAFE_RELEASE(m_pAniSet);
 	//SAFE_RELEASE(m_pFont);
@@ -44,8 +48,14 @@ cSkinnedMesh::~cSkinnedMesh(void)
 	}
 }
 
-void cSkinnedMesh::Setup( std::string sFolder, std::string sFile )
+void cSkinnedMesh::Setup( std::string sFolder, std::string sFile, std::string sName )
 {
+	m_strName = sName;
+	m_pName = new cOutputName;
+	m_pName->Setup(m_strName);
+
+
+
 	SetActionTime(2.0f);
 	SetCurAni(ANI_SET::IDLE);
 	
@@ -122,7 +132,9 @@ void cSkinnedMesh::Render()
 	if (m_bIsPick)
 		m_pSphere->Render();
 
+	//3d text
 	Render(m_pRootFrame);
+	m_pName->Render(m_matWorld);
 }
 
 
@@ -155,8 +167,8 @@ void cSkinnedMesh::Render( D3DXFRAME* pFrame )
 	//char szTemp[1024];
 	//sprintf(szTemp, "Ani No:%d,\n desc: %s", GetCurrentAni(), m_chDesc);
 	
-	//m_pHUD->Render(szTemp);
 
+	//m_pHUD->Render(szTemp);
 	ST_BONE* pBone = (ST_BONE*)pFrame;
 	D3DXMATRIXA16 matW;
 	matW = pBone->matWorldTM * m_matWorld;
